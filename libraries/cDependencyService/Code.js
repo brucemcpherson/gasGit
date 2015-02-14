@@ -5,7 +5,7 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cDependencyService',
-      version:'0.0.2',
+      version:'0.0.3',
       key:'Me90hDkr73ajS2dd-CDc4V6i_d-phDA33',
       description:'dependency service to get libraries associated with a script',
       share:'https://script.google.com/d/1QMZceXe24Rwfgw5jzXlqLsvoBLbmk_lvDBYB5K403wdTVeNu6-uzP5g8/edit?usp=sharing'
@@ -109,7 +109,7 @@ function DependencyService() {
      
        // reverse engineered so probably some gaps. Im looking initially for private libraries
        // starting at the end,
-      Logger.log('starting custom');
+
        // libs will be here
        libObs = [];
        
@@ -118,7 +118,7 @@ function DependencyService() {
        // when we get here we should have the beginning of a custom library section section
        if (p < 2) {
          // no libaries
-         Logger.log("there were no customs");
+
          return libObs;
        }
 
@@ -176,7 +176,7 @@ function DependencyService() {
      
        // reverse engineered so probably some gaps. Im looking initially for private libraries
        // starting at the end,
-       Logger.log('starting google');
+
        // libs will be here
        libObs = [];
        
@@ -184,7 +184,7 @@ function DependencyService() {
        
        // when we get here we should have the beginning of a custom library section section
        if (p < 2) {
-         Logger.log("there were no googles");
+
          // no libaries
          return libObs;
        }
