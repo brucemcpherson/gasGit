@@ -87,8 +87,6 @@ function DependencyService() {
            custom: clibs , 
            google: glibs
          };
-         
-         Logger.log(JSON.stringify(result.data));
 
        }
      }
