@@ -32,33 +32,36 @@ function doGit() {
   // create any non existent repos
   infos.forEach(function(d){
     
-    // see if we know it
-    var repo = findRepo(d,repos);
+    // we'll only bother with this if the committed date is earlier than the modified date
+    if (d.committedDate < d.modifiedDate || !d.committedDate) {
+      // see if we know it
+      var repo = findRepo(d,repos);
     
-    // if not then create it
-    if (!repo) {
-      var result = git.createRepo (d.repo);
-      if(!result.success) {
-        throw "error creating " + d.repo;
+      // if not then create it
+      if (!repo) {
+        var result = git.createRepo (d.repo);
+        if(!result.success) {
+          Logger.log(JSON.stringify(result));
+          throw "error creating " + d.repo + ' sure you havet got an upper/lower case confusion? ';
+        }
+        else {
+          repo = result.data;
+        }
+        Logger.log('created repo for ' + d.repo);
       }
-      else {
-        repo = result.data;
+
+      // create a readme if there isnt one
+      var f = git.getFileByPath(extractor.getEnums().FILES.README,repo);
+      if(!f.success) {
+        Logger.log('writing ' + extractor.getEnums().FILES.README + ' for ' + repo.name);
+        var result = git.getAndCommitAFile (
+          d.readmeFileId, 
+          extractor.getEnums().FILES.README,
+          repo
+        );
       }
-      Logger.log('created repo for ' + d.repo);
     }
 
-    // create a readme if there isnt one
-    var f = git.getFileByPath(extractor.getEnums().FILES.README,repo);
-    if(!f.success) {
-      Logger.log('writing ' + extractor.getEnums().FILES.README + ' for ' + repo.name);
-      var result = git.getAndCommitAFile (
-        d.readmeFileId, 
-        extractor.getEnums().FILES.README,
-        repo
-      );
-    }
-    
-    
   });
   
   // get the updated repos
@@ -71,61 +74,70 @@ function doGit() {
   
   // create/update new dependency files
   infos.forEach (function(d) {
-    
-    // find the repo - it should exist since we would have created it
-    var repo = findRepo (d , repos);
-    if (!repo) {
-      throw 'should have found repo ' + d.repo;
-    }
-    
-    // write dependency contents to git
-    Logger.log('writing ' + extractor.getEnums().FILES.DEPENDENCIES + ' for ' + repo.name);
-    var result = git.getAndCommitAFile (
-      d.dependenciesFileId, 
-      extractor.getEnums().FILES.DEPENDENCIES,
-      repo
-    );
-    
-    
-    // write info file to git
-    Logger.log('writing ' + extractor.getEnums().FILES.INFO + ' for ' + repo.name);
-    var result = git.getAndCommitAFile (
-      d.fileId, 
-      extractor.getEnums().FILES.INFO,
-      repo
-    );
-    
-    // write the all the modules from the main project
-    Logger.log('writing ' + "modules" + ' for ' + repo.name);
-    d.modules.forEach(function(m) {
+  
+    if (d.committedDate < d.modifiedDate || !d.committedDate) {
+      // find the repo - it should exist since we would have created it
+      var repo = findRepo (d , repos);
+      if (!repo) {
+        throw 'should have found repo ' + d.repo;
+      }
+      
+      // write dependency contents to git
+      Logger.log('writing ' + extractor.getEnums().FILES.DEPENDENCIES + ' for ' + repo.name);
       var result = git.getAndCommitAFile (
-        m.sourceId, 
-        SETTINGS.GIT.SCRIPTS + m.fileName,
+        d.dependenciesFileId, 
+        extractor.getEnums().FILES.DEPENDENCIES,
         repo
       );
-    });
-    
-    // write the libraries/dependencies
-    Logger.log('writing ' + "libraries" + ' for ' + repo.name);
-    d.dependencies.forEach(function(m) {
-
-      // if we find this , then we know it and can write the source
-      var f = findInfo (m , infos) ;
-      if (f) {
-        f.modules.forEach(function(e) {
-          var result = git.getAndCommitAFile (
-            e.sourceId, 
-            SETTINGS.GIT.LIBRARIES + f.title + "/" + e.fileName,
-            repo
-          );
-        });
-      }
-      if ((!f && m.known) || (f && !m.known)) {
-        throw 'should have found library ' +  m.name + ' in repo ' + repo.name;
-      }
-
-    });
-   
+      
+      
+      // write info file to git
+      Logger.log('writing ' + extractor.getEnums().FILES.INFO + ' for ' + repo.name);
+      var result = git.getAndCommitAFile (
+        d.fileId, 
+        extractor.getEnums().FILES.INFO,
+        repo
+      );
+      
+      // write the all the modules from the main project
+      Logger.log('writing ' + "modules" + ' for ' + repo.name);
+      d.modules.forEach(function(m) {
+        var result = git.getAndCommitAFile (
+          m.sourceId, 
+          SETTINGS.GIT.SCRIPTS + m.fileName,
+          repo
+        );
+      });
+      
+      // write the libraries/dependencies
+      Logger.log('writing ' + "libraries" + ' for ' + repo.name);
+      d.dependencies.forEach(function(m) {
+  
+        // if we find this , then we know it and can write the source
+        var f = findInfo (m , infos) ;
+        if (f) {
+          f.modules.forEach(function(e) {
+            var result = git.getAndCommitAFile (
+              e.sourceId, 
+              SETTINGS.GIT.LIBRARIES + f.title + "/" + e.fileName,
+              repo
+            );
+          });
+          
+        }
+        if ((!f && m.known) || (f && !m.known)) {
+          throw 'should have found library ' +  m.name + ' in repo ' + repo.name;
+        }
+      });
+      
+      // need to rewrite info file with committed date
+      d.committedDate = new Date().getTime();
+      extractor.putContent (d.fileId, d.title, d );
+    }
+    else {
+      Logger.log('No action needed for ' + d.repo + ':last commit (' + new Date(d.committedDate).toLocaleString() + 
+        ') after last modification (' + new Date(d.modifiedDate).toLocaleString() +')' );
+    } 
   });
   
   function findInfo (lib,infs) {
