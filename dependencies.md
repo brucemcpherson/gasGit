@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 14 February 2015 13:47:46 GMT by GasGit
+This repo (gasGit) was automatically updated on 14 February 2015 14:54:34 GMT by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
@@ -23,11 +23,11 @@ doGit| server_js
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
 cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|11|no|[here](libraries/cDependencyService "library source")
-cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|9|no|no
+cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|9|no|[here](libraries/cUrlResult "library source")
 cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|5|no|[here](libraries/cDriveJsonApi "library source")
 cEzyOauth2| cEzyOauth2|MSaYlTXSVk7FAqpHNCcqBv6i_d-phDA33|14|no|[here](libraries/cEzyOauth2 "library source")
 cNamedLock| cNamedLock|Mpv7vUR0126U53sfSMXsAPai_d-phDA33|11|no|[here](libraries/cNamedLock "library source")
-cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|21|no|no
+cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|21|no|[here](libraries/cUseful "library source")
 ### All dependencies and sub dependencies
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
