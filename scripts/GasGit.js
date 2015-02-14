@@ -174,7 +174,19 @@ function GasGit (extractor) {
     
     // writes a text files to a repo
     return cUrlResult.urlPost (repoObject.contents_url.replace("{+path}",path), options, 
-      "PUT", self.accessToken, self.contentOptions());
+      "PUT", self.accessToken, self.contentOptions(),
+       function (expResult) {
+         // this is a checker to force an exponential backoff even if there isnt an http error thrown.
+         // specifically to address this github http://stackoverflow.com/questions/19576601/github-api-issue-with-file-upload
+
+         var code = expResult.getResponseCode();
+        
+         if (409  === code) {
+           throw cUseful.TRYAGAIN;
+         }
+         return expResult;
+       }
+      );
     
   };
 
