@@ -25,13 +25,14 @@ function getLibraryInfo () {
   * @param {string} url the url
   * @param {string} optAccessToken an optional access token
   * @param {string} overrideOptions optional additional options
+  * @param {function} optChecker for rate limit checking
   * @return {HTTPResponse}
   */
-function urlGet (url, optAccessToken,overrideOptions) {
+function urlGet (url, optAccessToken,overrideOptions, optChecker) {
   return urlExecute( url , {
     method:"GET",
     muteHttpExceptions:true
-  }, optAccessToken );
+  }, optAccessToken , optChecker );
 }
 
 /**
@@ -41,9 +42,10 @@ function urlGet (url, optAccessToken,overrideOptions) {
 * @param {string} optMethod the method
 * @param {string} optAccessToken an optional access token
 * @param {string} overrideOptions optional additional options
+* @param {function} optChecker for rate limit checking
 * @return {HTTPResponse}
 */
-function urlPost (url,payload,optMethod,optAccessToken,overrideOptions) {
+function urlPost (url,payload,optMethod,optAccessToken,overrideOptions,optChecker) {
   
   var options = {};
   options.method = optMethod || "POST",
@@ -58,7 +60,7 @@ function urlPost (url,payload,optMethod,optAccessToken,overrideOptions) {
       options.payload = payload;
     }
   }
-  return urlExecute( url , options , optAccessToken, overrideOptions);
+  return urlExecute( url , options , optAccessToken, overrideOptions,optChecker);
 }
   
 /**
@@ -67,9 +69,10 @@ function urlPost (url,payload,optMethod,optAccessToken,overrideOptions) {
 * @param {object} options any additional options
 * @param {string} optAccessToken an optional access token
 * @param {string} overrideOptions optional additional options
+* @param {function} optChecker for rate limit checking
 * @return {object} a standard response
 */
-function urlExecute (url, options , optAccessToken,overrideOptions) {
+function urlExecute (url, options , optAccessToken,overrideOptions,optChecker) {
   var options = options || {};
   options.headers = options.headers || {};
   if (optAccessToken) {
@@ -81,7 +84,7 @@ function urlExecute (url, options , optAccessToken,overrideOptions) {
   // make a standard response object
   var result = cUseful.rateLimitExpBackoff(function() {
     return UrlFetchApp.fetch(url, finalOptions);
-  });
+  }, undefined ,  undefined, undefined , undefined , optChecker);
   
   return makeResults(result,url);
 }
