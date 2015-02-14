@@ -135,8 +135,13 @@ function doGit() {
       extractor.putContent (d.fileId, d.title, d );
     }
     else {
-      Logger.log('No action needed for ' + d.repo + ':last commit (' + new Date(d.committedDate).toLocaleString() + 
-        ') after last modification (' + new Date(d.modifiedDate).toLocaleString() +')' );
+      Logger.log('No action needed for ' + 
+        d.repo + 
+        ':last commit (' + 
+        new Date(d.committedDate).toLocaleString() + 
+        ') after last modification (' + 
+        new Date(d.modifiedDate).toLocaleString() +
+      ')' );
     } 
   });
   
