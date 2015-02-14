@@ -472,7 +472,7 @@ function ScriptExtractor(dapi,  extractPath) {
       
       // the currently observed projects libraries
       return cob.libraries.reduce (function (p,c) {
-
+        
         if (!pdep.some(function(d) {
           return d.library === c.library; 
         })) {
@@ -482,10 +482,9 @@ function ScriptExtractor(dapi,  extractPath) {
           
           // if we know it then resolve its libraries too.
           c.known = os.length > 0;
-          if (c.known) {
 
+          if (c.known) {
             recurse (p , os[0]);
-            
           }
         }
         return p;
@@ -499,6 +498,24 @@ function ScriptExtractor(dapi,  extractPath) {
       return recurse (d.dependencies , d);
     },{});
     
+    // now patch up the libraries known status
+    infos.forEach (function (d) {
+      d.libraries.forEach(function(e) {
+        var f = findDep (e,d.dependencies);
+        if (!f) {
+          throw 'should have found library ' + e.library + ' in dependencies of ' + d.title;
+        }
+        e.known  = f.known;
+      });
+    });
+    
+    function findDep (lib,deps) {
+
+      for (var i=0; i < deps.length ; i++ ) {
+          if (deps[i].library === lib.library) return deps[i];
+      }
+      
+    }
     return infos;
   }
   
