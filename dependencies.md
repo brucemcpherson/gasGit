@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 13 February 2015 21:20:47 GMT by GasGit
+This repo (gasGit) was automatically updated on 14 February 2015 10:07:04 GMT by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
@@ -22,18 +22,18 @@ doGit| server_js
 ### Directly referenced libraries
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
-cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|10|no|[here](libraries/cDependencyService "library source")
-cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|8|no|no
+cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|11|no|[here](libraries/cDependencyService "library source")
+cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|9|no|no
 cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|5|no|[here](libraries/cDriveJsonApi "library source")
 cNamedLock| cNamedLock|Mpv7vUR0126U53sfSMXsAPai_d-phDA33|11|no|[here](libraries/cNamedLock "library source")
 cEzyOauth2| cEzyOauth2|MSaYlTXSVk7FAqpHNCcqBv6i_d-phDA33|14|no|[here](libraries/cEzyOauth2 "library source")
-cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|20|no|no
+cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|21|no|no
 ### All dependencies and sub dependencies
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
-cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|10|no|[here](libraries/cDependencyService "library source")
-cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|8|no|[here](libraries/cUrlResult "library source")
-cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|20|no|[here](libraries/cUseful "library source")
+cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|11|no|[here](libraries/cDependencyService "library source")
+cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|9|no|[here](libraries/cUrlResult "library source")
+cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|21|no|[here](libraries/cUseful "library source")
 cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|5|no|[here](libraries/cDriveJsonApi "library source")
 cNamedLock| cNamedLock|Mpv7vUR0126U53sfSMXsAPai_d-phDA33|11|no|[here](libraries/cNamedLock "library source")
 cCacheHandler| cCacheHandler|M3reA5eBxtwxSqCEgPywb9ai_d-phDA33|11|no|[here](libraries/cCacheHandler "library source")
