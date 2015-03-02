@@ -4,7 +4,7 @@ function getLibraryInfo () {
   return {
     info: {
       name:'cCacheHandler',
-      version:'2.0.5',
+      version:'2.2.0',
       key:'M3reA5eBxtwxSqCEgPywb9ai_d-phDA33',
       description:'cache handler library',
       share:'https://script.google.com/d/1U6j9t_3ONTbhTCvhjwANMcEXeHXr4shgzTG0ZrRnDYLcFl3_IH2b2eAY/edit?usp=sharing'
