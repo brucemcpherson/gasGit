@@ -24,7 +24,7 @@ function doLibraries () {
   infoData.items.forEach(function(d,i){
     
     // the info file content
-    var content = infoData.content[i];d
+    var content = infoData.content[i];
     
     // the parent folder
     var parentId = extractor.getParents(d.id).data.items[0].id;
