@@ -447,8 +447,12 @@ function ScriptExtractor(dapi,  extractPath) {
         var deps = ds.setKey(d.id).getDependencies();
         
         if(!deps.success) {
+          // the dependency service is flaky so don't fail, just log
           Logger.log(deps);
-          throw 'dependency service failed - see log';
+          deps.data = deps.data || {};
+          d.libraries = deps.data.custom || [];
+          d.google = deps.data.google || [];
+          Logger.log ('dependency service failed - see log');
         }
         else {
           d.libraries = deps.data.custom;
