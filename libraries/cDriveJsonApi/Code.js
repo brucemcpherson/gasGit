@@ -259,7 +259,7 @@ function DriveJsonApi () {
   self.putContentById = function (id,content) {
     return self.urlPost (self.apiBase("upload") + "/" + id + "?uploadType=media",content,"PUT");
   };
-  
+
   /**
    * get content of a file given its id
    * @param {string} id the id
