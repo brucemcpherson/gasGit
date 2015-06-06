@@ -5,8 +5,8 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cDependencyService',
-      version:'0.0.3',
-      key:'Me90hDkr73ajS2dd-CDc4V6i_d-phDA33',
+      version:'0.0.4',
+      key:ScriptApp.getProjectKey(),
       description:'dependency service to get libraries associated with a script',
       share:'https://script.google.com/d/1QMZceXe24Rwfgw5jzXlqLsvoBLbmk_lvDBYB5K403wdTVeNu6-uzP5g8/edit?usp=sharing'
     },
@@ -64,6 +64,7 @@ function DependencyService() {
    
      // get the gwt array
      var result = self.getGwtDependencyArray();
+
      var data,p,libOb,libObs;
      
      if (result.success) {
@@ -89,12 +90,16 @@ function DependencyService() {
          };
 
        }
-     }
-     
+
+     }       
+     else {
+         throw JSON.stringify(result);
+       }
+
      function endSkip (id) {
        // skip over the stuff at the end
-       
-       for( p=data.length -1 ;  p > 1 && !(data[p] === '1j' &&  (data[p-1] === id ||  data[p-2] === id) ) ;p--) {
+     
+       for( p=data.length -1 ;  p > 1 && !((data[p] === '1h' &&  (data[p-1] === id ||  data[p-2] === id)) || data[p] === "1f") ;p--) {
           /////Logger.log('rejected ' + data.slice(p-2,p+1).map(function(d,i,a) { return a[a.length-i-1]}));
        }
 
@@ -112,13 +117,14 @@ function DependencyService() {
 
        // libs will be here
        libObs = [];
-       
+      
        endSkip ("9");
+       
        
        // when we get here we should have the beginning of a custom library section section
        if (p < 2) {
          // no libaries
-
+        
          return libObs;
        }
 
@@ -180,7 +186,9 @@ function DependencyService() {
        // libs will be here
        libObs = [];
        
+      
        endSkip ("8");
+      
        
        // when we get here we should have the beginning of a custom library section section
        if (p < 2) {
@@ -188,7 +196,7 @@ function DependencyService() {
          // no libaries
          return libObs;
        }
-       
+
        // if there were any libs
        while (p> 0 && data[p] === "8") {
 
@@ -275,7 +283,7 @@ function DependencyService() {
     return cUrlResult.urlExecute( self.getDependencyUrl() , {
         method:"POST",
         muteHttpExceptions:true,
-        payload:'7|1|4|' + self.getGwtUrl() + '|204C9DD3519E8831D0E079DA7B2AEB40|_|getDependencies|1|2|3|4|0|',
+        payload:'7|1|4|' + self.getGwtUrl() + '|EF277696F82F54899EF70E3DD87A10E3|_|getDependencies|1|2|3|4|0|',
         headers: {
           'X-GWT-Permutation':'30B4B043A3667EA6E3D36DF77D1B612A'
         },
@@ -283,7 +291,7 @@ function DependencyService() {
       }, self.accessToken);
 
    };
-   
+
    /**
     * get the url
     * @return {string} the base url
