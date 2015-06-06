@@ -138,13 +138,22 @@ function EzyOauth2 (authenticationPackage, optCallback , optTimeout , optArgs , 
           method : "POST" ,
           payload : {
               code : e.parameter.code,
-              client_id : authenticationPackage_.clientId,
-              client_secret : authenticationPackage_.clientSecret,
               redirect_uri : e.parameter.redirectUri,
               grant_type : "authorization_code"
           },
           muteHttpExceptions : true
       };
+      
+      // some APIS want to id.secret to be encoded as basic auth
+      if (urlPackage_.basic) {
+        options.headers = {
+           authorization: "Basic " + Utilities.base64Encode(authenticationPackage_.clientId + ":" + authenticationPackage_.clientSecret)
+        }
+      }
+      else {
+        options.payload.client_id = authenticationPackage_.clientId;
+        options.payload.client_secret = authenticationPackage_.clientSecret;
+      }
       
       if (urlPackage_.accept) {
         options.headers = {accept:urlPackage_.accept};
@@ -355,6 +364,22 @@ function EzyOauth2 (authenticationPackage, optCallback , optTimeout , optArgs , 
           tokenUrl: "https://github.com/login/oauth/access_token",
           refreshUrl: "https://github.com/login/oauth/access_token",
           accept: "application/json"
+      },
+      { name:'reddit',
+          authUrl : "https://www.reddit.com/api/v1/authorize",
+          tokenUrl: "https://www.reddit.com/api/v1/access_token",
+          refreshUrl: "https://www.reddit.com/api/v1/access_token",
+          basic:true
+      },
+      { name:'asana',
+         authUrl : "https://app.asana.com/-/oauth_authorize",
+         tokenUrl: "https://app.asana.com/-/oauth_token",
+         refreshUrl: "https://app.asana.com/-/oauth_token",
+      },
+      { name:'live',
+         authUrl : "https://login.live.com/oauth20_authorize.srf",
+         tokenUrl: "https://login.live.com/oauth20_token.srf",
+         refreshUrl: "https://login.live.com/oauth20_token.srf",
       }
 
     ];
