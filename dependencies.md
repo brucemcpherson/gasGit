@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 30 April 2015 12:43:30 BST by GasGit
+This repo (gasGit) was automatically updated on 06 June 2015 09:16:11 BST by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
@@ -20,10 +20,27 @@ GasGit| server_js
 doLibraries| server_js
 doGit| server_js
 ### Directly referenced libraries
-no libraries discovered
+*library*|*identifier*|*key*|*version*|*dev mode*|*source*|
+--- | --- | --- | --- | --- | --- 
+cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|15|no|[here](libraries/cDependencyService "library source")
+cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|11|no|[here](libraries/cUrlResult "library source")
+cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|8|no|[here](libraries/cDriveJsonApi "library source")
+cNamedLock| cNamedLock|Mpv7vUR0126U53sfSMXsAPai_d-phDA33|12|no|[here](libraries/cNamedLock "library source")
+cEzyOauth2| cEzyOauth2|MSaYlTXSVk7FAqpHNCcqBv6i_d-phDA33|17|no|[here](libraries/cEzyOauth2 "library source")
+cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|25|no|[here](libraries/cUseful "library source")
 ### All dependencies and sub dependencies
-no libraries discovered
+*library*|*identifier*|*key*|*version*|*dev mode*|*source*|
+--- | --- | --- | --- | --- | --- 
+cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|15|no|[here](libraries/cDependencyService "library source")
+cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|11|no|[here](libraries/cUrlResult "library source")
+cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|23|no|[here](libraries/cUseful "library source")
+cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|8|no|[here](libraries/cDriveJsonApi "library source")
+cNamedLock| cNamedLock|Mpv7vUR0126U53sfSMXsAPai_d-phDA33|12|no|[here](libraries/cNamedLock "library source")
+cCacheHandler| cCacheHandler|M3reA5eBxtwxSqCEgPywb9ai_d-phDA33|13|no|[here](libraries/cCacheHandler "library source")
+cEzyOauth2| cEzyOauth2|MSaYlTXSVk7FAqpHNCcqBv6i_d-phDA33|17|no|[here](libraries/cEzyOauth2 "library source")
 ### Enabled Google Services
-no libraries discovered
+*library*|*identifier*|*version*
+--- | --- | --- 
+drive| Drive|v2
 ###Need more detail ?
 You can see [full project info as json here](info.json)
