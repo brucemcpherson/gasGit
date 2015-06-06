@@ -327,7 +327,7 @@ function ScriptExtractor(dapi,  extractPath) {
     if (!oldInfo || oldInfo.modifiedDate < info.modifiedDate) {
       info.extracted = true;
       info.repo = cUseful.replaceAll(info.title," " ,"-") ;
-     
+      
       
       // extraction process - write the modules
       info.modules.forEach(function (m,i) {
