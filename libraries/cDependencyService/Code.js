@@ -5,8 +5,8 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cDependencyService',
-      version:'0.0.4',
-      key:ScriptApp.getProjectKey(),
+      version:'0.0.5',
+      key:'Me90hDkr73ajS2dd-CDc4V6i_d-phDA33',
       description:'dependency service to get libraries associated with a script',
       share:'https://script.google.com/d/1QMZceXe24Rwfgw5jzXlqLsvoBLbmk_lvDBYB5K403wdTVeNu6-uzP5g8/edit?usp=sharing'
     },
@@ -140,8 +140,9 @@ function DependencyService() {
          // looks like there are 2 versions of library layout.. so there are some optional skips
          libOb = {};
          // sometimes an extra item
+         
          if(data[p--] === "a") {
-           libOb.development = (data[p--] === "0");
+           libOb.development = (data[p--] == "0");
          }
          else {
            libOb.development = false;
@@ -167,7 +168,7 @@ function DependencyService() {
          }
          
          libOb.version = data[p--];
-
+         
          libObs.push(libOb);
 
        }
