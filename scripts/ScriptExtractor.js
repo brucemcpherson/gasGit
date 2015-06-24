@@ -375,19 +375,22 @@ function ScriptExtractor(dapi,  extractPath) {
   self.getInfosAndExtract = function (scripts) {
   
     return scripts.map (function (d) {
+     
       
       // design in parallelism 
-      
+    
       // we'll use named locks to be able to share
-      var lock = new cNamedLock.NamedLock().setKey("getInfosAndExtract",d.id);
+      //var lock = new cNamedLock.NamedLock().setKey("getInfosAndExtract",d.id);
       
-      if (lock.isLocked()) {
-        Logger.log('skipping ' + d.title + ' as its locked');
-      }
+      //if (lock.isLocked()) {
+      //  Logger.log('skipping ' + d.id + ' as its locked');
+     //}
       
-      else {
-        return lock.protect( d.id, function () {
+      //else {
+        //Logger.log('trying lock on ' + d.id);
+        //return lock.protect( d.id, function () {
           // get the project file
+         
           var project = dapi_.getFileById (d.id,self.getEnums().FIELDS.PROJECT);
           if (!project.success) {
             throw 'failed to get project ' + d.id + ':' + JSON.stringify(project);
@@ -407,7 +410,7 @@ function ScriptExtractor(dapi,  extractPath) {
           if (!feed.success) {
             throw 'failed to get feed ' + JSON.stringify(feed);
           }
-          
+          Logger.log('protected');
           var source = [];
           // and get info on each of the modules
           info.modules = feed.data.files.map (function (m) {
@@ -424,8 +427,8 @@ function ScriptExtractor(dapi,  extractPath) {
           // extract the sources
           self.extract (info, source);
           return info;
-        }).result;
-      }
+        //}).result;
+      //}
     });
   };
   
