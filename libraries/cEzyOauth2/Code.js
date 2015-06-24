@@ -11,7 +11,6 @@
 function EzyOauth2 (authenticationPackage, optCallback , optTimeout , optArgs , optForce) {
 
   var self = this;
-
   
   // this is your authentication package, and looks like this
   //{clientId : "xxx.apps.googleusercontent.com", // from cloud console
