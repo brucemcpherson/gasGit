@@ -7,7 +7,7 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cNamedLock',
-      version:'2.0.3',
+      version:'2.1.0',
       key:'Mpv7vUR0126U53sfSMXsAPai_d-phDA33',
     },
     dependencies:[cCacheHandler.getLibraryInfo()]
@@ -18,7 +18,7 @@ function getLibraryInfo () {
  * @constructor
  * @param {number} [optTimeout=120000] timeout of lock in milliseconds
  * @param {number} [optWaitTime=20000] time to wait for lock before giving up in milliseconds
- * @param {boolean} [optUseCache=true] whether to use cache (false will use properties)
+ * @param {boolean} [optUseCache=true] whether to use cache (false will use properties) - now redunandt - always uses properties
  * @param {number} [optMinSleepTime=250] minimum time to sleep for between attempts
  * @return {NamedLock} self
  */ 
@@ -29,7 +29,7 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
   var SETTINGS = {
     capability:'nl',
     timeout: 120000,
-    waitTime: 15000,
+    waitTime: 19000,
     useCache: true,
     minSleepTime: 618,
     who:'anon'
@@ -40,30 +40,28 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
   // keep the lock in cache for this number of seconds
   var timeout_ = optTimeOut || SETTINGS.timeout;
   var waitTime_ = optWaitTime || SETTINGS.waitTime;
-  var useCache = typeof optUseCache === 'undefined' ? SETTINGS.useCache : optUseCache ;
   var cacheTime_ = Math.ceil(timeout_ /1000);
   var minSleepTime_ = optMinSleepTime || SETTINGS.minSleepTime;
   var id_ = generateUniqueString();
   var item_;
   
   // get a handler
-  var cacheHandler_ = new cCacheHandler.CacheHandler(cacheTime_,SETTINGS.capability,false);
+  var cache_ = new cCacheHandler.CacheHandler(cacheTime_,SETTINGS.capability,false,false,CacheService.getScriptCache());
 
-  if (useCache) {
-    var cache_ =  cacheHandler_.getCacheObject();
-
-  }
-  else {
-    var property_ = PropertiesService.getScriptProperties();
-
-  } 
+  /**
+   * delete all expired cache locks
+   */
+  self.cleanUp = function () {
+    cache_.propertyHousekeeping();
+  };
+  
   /**
    * set a key for this lock
    * @param {...*} var_args any number of args/serializable types that can be combined to make a key
    * @return {NamedLock} self
    */
    self.setKey = function () {
-     key_ = cacheHandler_.generateCacheKey(null, Array.prototype.slice.call(arguments));
+     key_ = cache_.generateCacheKey(null, Array.prototype.slice.call(arguments));
      return self;
    };
 
@@ -125,7 +123,13 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
 
     function gasLockProtect_ (who, func) {
       var r, gasLock = LockService.getPublicLock();
-      gasLock.tryLock(waitTime_);
+      
+      try {
+        gasLock.waitLock (waitTime_);
+      }
+      catch (err) {
+        throw 'failed on waitlock';
+      }
       
       if (gasLock.hasLock()) {
         
@@ -169,13 +173,7 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
      
     function setItem_(item) {
       var now = Date.now();
-      var st = JSON.stringify(item);
-      if (useCache) {
-        cache_.put(key_,st,cacheTime_);
-      }
-      else {
-        property_.setProperty(key_,st);
-      }
+      cache_.putCache (key_,item);
       item_ = item;
       return item_;
     }
@@ -186,29 +184,15 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
      */
      
     function getLockOwner_ (key) {
-      var st ;
-      if (useCache) {
-         st = cache_.get(key);
-      }
-      else {
-        st = property_.getProperty (key);
-      }
-      var ob = st ? JSON.parse(st) : null;
+      var ob = cache_.getCache(key);
       return ob && ob.expires > Date.now()  ? ob  : null;
-
     }
     
     /**----------------
      * delete the current lock
      */
     function removeItem_() {
-
-      if (useCache) {
-        cache_.remove(key_);
-      }
-      else {
-        property_.deleteProperty(key_);
-      }
+      cache_.removeCache(key_);
     }
     
    /**-----------------
@@ -315,5 +299,5 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
     return arbitraryString(2) + new Date().getTime().toString(36);
   };
   
-    return self;
+   return self;
 }
