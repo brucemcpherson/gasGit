@@ -5,7 +5,7 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cDependencyService',
-      version:'0.0.5',
+      version:'0.0.6',
       key:'Me90hDkr73ajS2dd-CDc4V6i_d-phDA33',
       description:'dependency service to get libraries associated with a script',
       share:'https://script.google.com/d/1QMZceXe24Rwfgw5jzXlqLsvoBLbmk_lvDBYB5K403wdTVeNu6-uzP5g8/edit?usp=sharing'
@@ -56,6 +56,7 @@ function DependencyService() {
      return scriptKey_;
    };
    
+  
    /**
     * unravel the depedency array
     * @return {object} a standard results object
@@ -65,7 +66,7 @@ function DependencyService() {
      // get the gwt array
      var result = self.getGwtDependencyArray();
 
-     var data,p,libOb,libObs;
+     var data,p,libObs,workData;
      
      if (result.success) {
        // now we need to decipher this wierd format
@@ -78,175 +79,155 @@ function DependencyService() {
          data = result.data.slice(0,result.data.length-3).map(function(d){
            return  d >0 ? dArray[d-1] : d;
          });
-         
-         // decode all that
-         var glibs = getGoogle(data);
-         var clibs = getCustom(data);
-         
+
          // send them back
          result.data = {
-           custom: clibs , 
-           google: glibs
+           custom: getCustom() , 
+           google: getGoogle()
          };
-
+         
        }
-
+       
      }       
      else {
-         throw JSON.stringify(result);
-       }
-
-     function endSkip (id) {
-       // skip over the stuff at the end
-     
-       for( p=data.length -1 ;  p > 1 && !((data[p] === '1h' &&  (data[p-1] === id ||  data[p-2] === id)) || data[p] === "1f") ;p--) {
-          /////Logger.log('rejected ' + data.slice(p-2,p+1).map(function(d,i,a) { return a[a.length-i-1]}));
-       }
-
-       // pop the stuff before the first id
-       while (data[p] !== id && p >1) p--;
-
-       return p;
-     }
-     
-     // get the custom libraries
-     function getCustom() {
-     
-       // reverse engineered so probably some gaps. Im looking initially for private libraries
-       // starting at the end,
-
-       // libs will be here
-       libObs = [];
-      
-       endSkip ("9");
-       
-       
-       // when we get here we should have the beginning of a custom library section section
-       if (p < 2) {
-         // no libaries
-        
-         return libObs;
-       }
-
-       // if there were any libs
-       while (p> 0 && data[p] === "9") {
-
-         // pop the 9
-         p--;
-        
-        // sometimes there's extra nines - dont know why
-         while (data[p] === "9") p--;
-           
-         // looks like there are 2 versions of library layout.. so there are some optional skips
-         libOb = {};
-         // sometimes an extra item
-         
-         if(data[p--] === "a") {
-           libOb.development = (data[p--] == "0");
-         }
-         else {
-           libOb.development = false;
-         }
-
-         libOb.identifier = data[p--];
-
-         if(!depCheck (data[p--] === "i")) return result;
-         
-         libOb.key = data[p--];
-
-         if(!depCheck (data[p--] === "j")) return result;
-         
-         libOb.sdc = data[p--];
-         
-         libOb.library = data[p--];
-         
-         if(!depCheck (data[p--] === "b")) return result;
-
-         if (data[p--] === "c") {
-           // sometimes there's an extra one here - dont know why yet
-           p--;
-         }
-         
-         libOb.version = data[p--];
-         
-         libObs.push(libOb);
-
-       }
-
-       return libObs;
-
+       throw JSON.stringify(result);
      }
 
-        
-     // get the google libraries
-     function getGoogle () {
-     
-       // reverse engineered so probably some gaps. Im looking initially for private libraries
-       // starting at the end,
-
-       // libs will be here
-       libObs = [];
-       
-      
-       endSkip ("8");
-      
-       
-       // when we get here we should have the beginning of a custom library section section
-       if (p < 2) {
-
-         // no libaries
-         return libObs;
-       }
-
-       // if there were any libs
-       while (p> 0 && data[p] === "8") {
-
-         // pop the 8
-         p--;
-         
-         libOb = {};
-         // sometimes theres multiple 8s 
-         while (p >=0 && data[p] === "8") p--;
-         
-         // google useful stuff starts after a ""
-         
-         while (p >= 3 && data[p] !== "" && data[p] !== "1j" && data[p] !== "1h") { 
-           p--;
-         }
-         // we should have hit a ""
-         if(!depCheck (p >= 3 && data[p] === "")) return result; 
-
-         // pop the empty string
-         p--;
-         libOb.identifier = data[p--];
-         libOb.library = data[p--];
-         libOb.version = data[p--];
-         libObs.push(libOb);
-       }
-       return libObs;
-
-     }
-
-     function depCheck (test) {
-
-       if (!test) {
-         Logger.log("failed at:" + p + ":" + data[p]);
-         result.success= false;
-         result.debug = { 
-           data: data,
-           p:p,
-           datap:data[p],
-           libOb:libOb,
-           libObs:libObs 
-         };
-         result.extended = libObs.length + ' library identifier block was not as expected at ' + data[p] + ' pos ' + p;
-       }
-       return test;
-     }
-     
      return result;
+     
+     function getCustom () {
+       // reverse engineered so probably some gaps
 
-   };
+       // libs will be here
+       libObs = [];
+       p = 0;
+       workData = data;
+       
+       // find the data
+       ignoreTill (["www.googleapis.com"]);
+       p++;
+       
+       // they start at 1j
+       ignoreTill(["1j"]);
+       var start = p++;
+       
+       // and finish at 1j
+       ignoreTill(["1j"]);
+       var finish = p;
+
+       // this is the cusom part
+       workData = data.slice ( start+1 , finish); 
+       p = 0;
+       
+       // get all the dependencies
+       while (p < workData.length) {
+
+         var libOb = {};
+         libOb.version = workData[p++];
+           
+           // name introduced by d
+         if (cUseful.isUndefined(ignoreTill(["d"]))) {
+           // force exit - we're done
+           p = workData.length;
+         }
+         
+         else {    
+           libOb.library = workData[++p];
+           libOb.sdc = workData[++p];
+           
+           // key introduced by l
+           ignoreTill(["l"]);
+           libOb.key = workData[++p];
+           
+           //identifier introduced by k
+           ignoreTill(["k"]);
+           libOb.identifier = workData[++p];
+           
+           // development version 0
+           libOb.development = workData[++p] === 0;
+           
+           // done
+           libObs.push(libOb);
+           
+           // find the next one
+           ignoreTill(["b"]);
+           p++;
+         }
+         
+       }
+
+       return libObs;
+       
+     }
+     
+     function getGoogle () {
+       // reverse engineered so probably some gaps. Im looking initially for private libraries
+      
+       // libs will be here
+       libObs = [];
+       
+       p = 0;
+       workData = data;
+       
+       // find the data
+       ignoreTill (['8']);
+       var start = p++;
+       
+       ignoreTill (["/"]);
+       var finish = p;
+      
+       // this is the cusom part
+       workData = data.slice ( start+1 , finish); 
+       p = 0;
+       
+       // get all the dependencies
+       while (p < workData.length) {
+         
+         // used one is introduced by 1j
+         if (cUseful.isUndefined(ignoreTill(["1j"]))) {
+           // force exit - we're done
+           p = workData.length;
+         }
+         
+         else {
+           
+           // details being with f
+           ignoreTill ("f");
+           var libOb = {};
+           libOb.library = workData[++p]; // eg Drive API
+           libOb.sdc = workData[++p]; // eg drive
+           libOb.key = workData[++p]; // the url eg https://developers.google.com/apps-script/advanced/drive
+           libOb.identifier = workData[++p]; // eg Drive	
+           libOb.version = workData[++p]; // eg v2        
+
+           // done
+           libObs.push(libOb);
+           p++;
+         }
+         
+       }
+
+       return libObs;
+       
+     }
+     
+     function ignore () {
+       while (p < workData.length && 'delkf'.indexOf(workData[p]) >= 0 ) {
+         p++;
+       }
+       return p < workData.length ? workData[p] : undefined;
+     }
+     
+     function ignoreTill (target) {
+       while (p < workData.length &&  target.indexOf (workData[p]) < 0 ) { 
+         p++;
+       }
+       return p <workData.length ?workData[p] : undefined;
+     }
+      
+    
+   };  
+ 
    /**
     * get the dependency array
     * @return {object} a standard results object.
@@ -271,6 +252,7 @@ function DependencyService() {
          result.success = false;
          result.extended = "GWT reported a failure - look at the result.content for details";
        }
+
      }
      return result;
    };
@@ -284,9 +266,9 @@ function DependencyService() {
     return cUrlResult.urlExecute( self.getDependencyUrl() , {
         method:"POST",
         muteHttpExceptions:true,
-        payload:'7|1|4|' + self.getGwtUrl() + '|EF277696F82F54899EF70E3DD87A10E3|_|getDependencies|1|2|3|4|0|',
+        payload:'7|1|4|' + self.getGwtUrl() + '|62E5DDB596B94438DAD2C2B90696CEF0|_|getDependencies|1|2|3|4|0|',
         headers: {
-          'X-GWT-Permutation':'30B4B043A3667EA6E3D36DF77D1B612A'
+          'X-GWT-Permutation':'2C70220EABC9BBFDA8F26FCE531090C3'
         },
         contentType:'text/x-gwt-rpc;charset=UTF-8'
       }, self.accessToken);
