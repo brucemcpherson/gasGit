@@ -1,14 +1,5 @@
 "use strict";
-function wrapper () {
 
-  ['addons','advancedservices'].forEach(function(d) {
-    SETTINGS.EXTRACT.TO = "/books/going gas/assets/goinggas/"+ d +"/gas/source";
-    SETTINGS.PARENT.SCRIPTS = ["/books/going gas/assets/goinggas/"+ d +"/gas/scripts"];
-    doExtraction();
-    doLibraries();
-  });
-
-}
 
 /**
  * RUN FIRST
