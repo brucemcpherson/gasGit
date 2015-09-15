@@ -25,7 +25,7 @@ function doLibraries () {
     
     // the info file content
     var content = infoData.content[i];
-    
+    Logger.log('creating ' + content.title + ' ' + i);
     // the parent folder
     var parentId = extractor.getParents(d.id).data.items[0].id;
     
