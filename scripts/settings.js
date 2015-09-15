@@ -2,7 +2,7 @@
 /**
  * SET THIS STUFF TO WHATEVER YOU NEED
  */
-var SETTINGS= {
+var SETTINGS = {
   EXTRACT: { // where to put the sources to
     TO:"/Extraction/Scripts"
   },
@@ -26,3 +26,4 @@ var SETTINGS= {
     SCRIPTS: "scripts/"
   }
 };
+
