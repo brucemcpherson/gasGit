@@ -120,12 +120,14 @@ function ScriptExtractor(dapi,  extractPath) {
   self.makeDepenciesMd = function (content) {
     return "# Google Apps Script Project: " + content.title + "\n" +
     "This repo (" + content.repo + ") was automatically updated on " + new Date().toLocaleString() + " by GasGit\n\n" +
-    'For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or ' +
+    'For more information see the [desktop liberation site]' + 
+    '(http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or ' +
     '[contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")' +
     "\n## Details for Apps Script project " + content.title +
-    "\nWhere possibile directly referenced or sub referenced library sources have been copied to this repository" +
+    "\nWhere possible directly referenced or sub referenced library sources have been copied to this repository" +
     ", or you can include the library references shown. " +
-    "\nThe shared link for [" + content.title + " is here](https://script.google.com/d/" + content.id + '/edit?usp=sharing "open in the GAS IDE")\n' +
+    "\nThe shared link for [" + content.title + " is here](https://script.google.com/d/" + content.id + 
+    '/edit?usp=sharing "open in the GAS IDE")\n' +
     "\n### Modules of " + content.title + ".gs included in this repo\n" +
     (content.modules && content.modules.length ? (
       "*name*|*type*\n" +
@@ -410,7 +412,7 @@ function ScriptExtractor(dapi,  extractPath) {
           if (!feed.success) {
             throw 'failed to get feed ' + JSON.stringify(feed);
           }
-          Logger.log('protected');
+          
           var source = [];
           // and get info on each of the modules
           info.modules = feed.data.files.map (function (m) {
@@ -447,21 +449,22 @@ function ScriptExtractor(dapi,  extractPath) {
       
       // get top level dependencies
       Logger.log('doing dependencies for ' + d.title);
-        var deps = ds.setKey(d.id).getDependencies();
-        
-        if(!deps.success) {
-          // the dependency service is flaky so don't fail, just log
-          Logger.log(deps);
-          deps.data = deps.data || {};
-          d.libraries = deps.data.custom || [];
-          d.google = deps.data.google || [];
-          Logger.log ('dependency service failed - see log');
-        }
-        else {
-          d.libraries = deps.data.custom;
-          d.google = deps.data.google;
-        }
-        
+      
+      var deps = ds.setKey(d.id).getDependencies();
+      Logger.log(deps.data);
+      if(!deps.success) {
+        // the dependency service is flaky so don't fail, just log
+        Logger.log(deps);
+        deps.data = deps.data || {};
+        d.libraries = deps.data.custom || [];
+        d.google = deps.data.google || [];
+        Logger.log ('dependency service failed - see log');
+      }
+      else {
+        d.libraries = deps.data.custom;
+        d.google = deps.data.google;
+      }
+
     });
     
     return infos;
