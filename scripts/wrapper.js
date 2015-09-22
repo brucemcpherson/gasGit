@@ -6,7 +6,7 @@ function wrapper () {
     SETTINGS.PARENT.SCRIPTS = ["/books/going gas/assets/goinggas/"+ d +"/gas/scripts"];
     doExtraction();
     //library service not working for now
-    //doLibraries();
+    doLibraries();
   });
 
 }
