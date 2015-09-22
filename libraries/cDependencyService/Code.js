@@ -167,50 +167,39 @@ function DependencyService() {
        libObs = [];
        
        p = 0;
-       workData = data;
        
+       // this one works better in reverse
+       workData = data.reverse();
+      
        // find the data
-       ignoreTill (['8']);
-       var start = p++;
+       ignoreTill (['/']);
+       p++;
+       ignoreTill (['']);
+       var start = p;
        
-       ignoreTill (["/"]);
+       ignoreTill (["1j"]);
        var finish = p;
       
-       // this is the cusom part
-       workData = data.slice ( start+1 , finish); 
+       // this is the google part
+       workData = data.slice ( start , finish); 
        p = 0;
-       
+      
        // get all the dependencies
        while (p < workData.length) {
-         
-         // used one is introduced by 1j
-         if (cUseful.isUndefined(ignoreTill(["1j"]))) {
-           // force exit - we're done
-           p = workData.length;
-         }
-         
-         else {
-           
-           // details being with f
-           ignoreTill ("f");
+         if (!cUseful.isUndefined(ignoreTill (['']))) {
            var libOb = {};
-           libOb.library = workData[++p]; // eg Drive API
-           libOb.sdc = workData[++p]; // eg drive
-           libOb.key = workData[++p]; // the url eg https://developers.google.com/apps-script/advanced/drive
-           libOb.identifier = workData[++p]; // eg Drive	
+           libOb.library = libOb.identifier = libOb.key = workData[++p]; // eg Drive API
+           libOb.sdc = libOb.key = workData[++p]; // eg drive	
            libOb.version = workData[++p]; // eg v2        
-
            // done
            libObs.push(libOb);
-           p++;
          }
-         
        }
-
        return libObs;
        
      }
      
+    
      function ignore () {
        while (p < workData.length && 'delkf'.indexOf(workData[p]) >= 0 ) {
          p++;
