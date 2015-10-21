@@ -7,7 +7,7 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cNamedLock',
-      version:'2.1.0',
+      version:'2.2.0',
       key:'Mpv7vUR0126U53sfSMXsAPai_d-phDA33',
     },
     dependencies:[cCacheHandler.getLibraryInfo()]
@@ -44,10 +44,22 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
   var minSleepTime_ = optMinSleepTime || SETTINGS.minSleepTime;
   var id_ = generateUniqueString();
   var item_;
+  var sameInstanceLocked_ = false;
   
   // get a handler
   var cache_ = new cCacheHandler.CacheHandler(cacheTime_,SETTINGS.capability,false,false,CacheService.getScriptCache());
-
+  var cacheObject_ = cache_.getCacheObject();
+  
+  /**
+   * whether to consider the same instance as being locked
+   * @param {boolean} sameInstanceLocked if false, then the same instance is not locked out.
+   * @return {cNamedLock} self
+   */
+  self.setSameInstanceLocked = function(sameInstanceLocked) {
+    sameInstanceLocked_ = sameInstanceLocked;
+    return self;
+  };
+  
   /**
    * delete all expired cache locks
    */
@@ -78,7 +90,9 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
    * @return {boolean} is there a lock?
    */
    self.isLocked = function () {
-     return getLockOwner_ (key_) ? true : false;
+     var owner = getLockOwner_ (key_); 
+     // if the requestor is the same instance as the holder, assume it not to be locked.
+     return owner ? (!sameInstanceLocked_ && owner.id === id_ ? false : true) : false;
    };
 
    /**
@@ -98,13 +112,20 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
       
         // wrap the whole thing up in a lockservice lock
         roll = gasLockProtect_ (who, function (g) {
+          
           try {
             // see if someone has it
-            if (!getLockOwner_ (key_)) {
+            var owner = getLockOwner_ (key_);
+            
+            if (!owner || (!sameInstanceLocked_ && owner.id === id_)) {
               // its free
+             
               var now = new Date().getTime();
               setItem_ ( {id:id_, key:key_, when:now, who:who, expires:now+timeout_, waitedFor: now - startedTrying} );
               return self;
+            }
+            else {
+            //Logger.log(id_ + JSON.stringify(owner) + ' has it');
             }
           }
           catch(e) {
@@ -135,6 +156,7 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
         
         // do the work
         try {
+          
           r = func(gasLock);
         }
         catch (err) {
@@ -153,6 +175,7 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
       
     function gasLockRelease_(gasLock,who) {
       // drop the lock
+      
       try {
         if (gasLock) {
           gasLock.releaseLock();
@@ -173,7 +196,7 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
      
     function setItem_(item) {
       var now = Date.now();
-      cache_.putCache (key_,item);
+      cacheObject_.put (key_,JSON.stringify(item));
       item_ = item;
       return item_;
     }
@@ -184,7 +207,10 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
      */
      
     function getLockOwner_ (key) {
-      var ob = cache_.getCache(key);
+      var sob = cacheObject_.get(key);
+      if(sob) {
+        var ob = JSON.parse(sob);
+      }
       return ob && ob.expires > Date.now()  ? ob  : null;
     }
     
@@ -192,7 +218,7 @@ function NamedLock (optTimeOut,optWaitTime,optUseCache,optMinSleepTime) {
      * delete the current lock
      */
     function removeItem_() {
-      cache_.removeCache(key_);
+      cacheObject_.remove(key_);
     }
     
    /**-----------------
