@@ -272,7 +272,7 @@ function EzyOauth2 (authenticationPackage, optCallback , optTimeout , optArgs , 
    */
  
   function  createRedirectUri_ (optScriptUrl) {
-    
+  /**  
     // note that the redirect URI's created here will need to be inserted into the cloud console
     var url = optScriptUrl || ScriptApp.getService().getUrl();
     // strip off the function specific
@@ -281,6 +281,9 @@ function EzyOauth2 (authenticationPackage, optCallback , optTimeout , optArgs , 
       url = url.slice (0,k);
     }
     return url + "/usercallback";
+   */
+   // note that the redirect URI's created here will need to be inserted into the cloud console
+    return optScriptUrl || 'https://script.google.com/macros/d/' + ScriptApp.getProjectKey() + '/usercallback'
   }
 
   /** 
