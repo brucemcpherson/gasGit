@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 26 November 2015 19:58:22 GMT by GasGit
+This repo (gasGit) was automatically updated on 08 February 2016 17:04:51 GMT by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
@@ -26,7 +26,7 @@ cEzyOauth2| cEzyOauth2|MSaYlTXSVk7FAqpHNCcqBv6i_d-phDA33|17|no|[here](libraries/
 cNamedLock| cNamedLock|Mpv7vUR0126U53sfSMXsAPai_d-phDA33|15|no|[here](libraries/cNamedLock "library source")
 cGoa| cGoa|MZx5DzNPsYjVyZaR67xXJQai_d-phDA33|7|no|[here](libraries/cGoa "library source")
 cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|8|no|[here](libraries/cDriveJsonApi "library source")
-cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|22|no|[here](libraries/cDependencyService "library source")
+cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|23|no|[here](libraries/cDependencyService "library source")
 cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|28|no|[here](libraries/cUseful "library source")
 cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|11|no|[here](libraries/cUrlResult "library source")
 ### All dependencies and sub dependencies
@@ -39,7 +39,7 @@ cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|32|no|[here](libraries/cUsefu
 cGoa| cGoa|MZx5DzNPsYjVyZaR67xXJQai_d-phDA33|7|no|[here](libraries/cGoa "library source")
 cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|8|no|[here](libraries/cDriveJsonApi "library source")
 cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|11|no|[here](libraries/cUrlResult "library source")
-cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|22|no|[here](libraries/cDependencyService "library source")
+cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|23|no|[here](libraries/cDependencyService "library source")
 ### Enabled Google Services
 *library*|*identifier*|*version*
 --- | --- | --- 
