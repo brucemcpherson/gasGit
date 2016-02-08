@@ -1,3 +1,9 @@
+/**
+ * if you want to use the regular git client,
+ * you can do this to create a folder from 
+ * various scripts
+ * then use the regulr git client to push
+ */
 function wrapper () {
   //sp
 
