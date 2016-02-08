@@ -5,7 +5,7 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cDependencyService',
-      version:'0.0.7',
+      version:'0.0.8',
       key:'Me90hDkr73ajS2dd-CDc4V6i_d-phDA33',
       description:'dependency service to get libraries associated with a script',
       share:'https://script.google.com/d/1QMZceXe24Rwfgw5jzXlqLsvoBLbmk_lvDBYB5K403wdTVeNu6-uzP5g8/edit?usp=sharing'
@@ -246,6 +246,12 @@ function DependencyService() {
      return result;
    };
    
+   // HOW TO DO THIS
+   // open the dev console in the IDE
+   // find the call to the dependency service
+   // change the tail in properties to the code found afetr the url
+   // something like this
+   // look at the header and get the gwt permutation and put it in the permutation properties
    /**
     * get the dependencies in gwt format
     * @return {object} a standard results object
@@ -256,7 +262,7 @@ function DependencyService() {
     return cUrlResult.urlExecute( self.getDependencyUrl() , {
         method:"POST",
         muteHttpExceptions:true,
-        payload:'7|1|4|' + self.getGwtUrl() + prop.tail, //'|6B9902874FFB0209D71ED9EB07886D5E|_|getDependencies|1|2|3|4|0|',
+        payload:'7|1|4|' + self.getGwtUrl() + prop.tail, //'|2EEC4241878AE31B209922BFA0F159A1|_|getDependencies|1|2|3|4|0|',
         headers: {
           'X-GWT-Permutation':prop.permutation    //'9C8055A1FEB9C7A543C47D445909DC53'
         },
@@ -264,16 +270,8 @@ function DependencyService() {
       }, self.accessToken);
 
    }
-//7|1|4|https://script.google.com/a/mcpher.com/d/1TphrUjRcx5sGlhgkfjB2R9MOZe3cPF7wK1LV8yVNoFCAwRTeNyXVsDFd/gwt/|2EEC4241878AE31B209922BFA0F159A1|_|getDependencies|1|2|3|4|0|
-  
-// discovered 9/3/15
-//   payload:'7|1|4|' + self.getGwtUrl() + '|62E5DDB596B94438DAD2C2B90696CEF0|_|getDependencies|1|2|3|4|0|',
-//     headers: {
-//       'X-GWT-Permutation':'2C70220EABC9BBFDA8F26FCE531090C3'
-//     },
-// discovered 9/22/15  
-//X-GWT-Permutation:9C8055A1FEB9C7A543C47D445909DC53
-//7|1|4|https://script.google.com/a/mcpher.com/d/1TphrUjRcx5sGlhgkfjB2R9MOZe3cPF7wK1LV8yVNoFCAwRTeNyXVsDFd/gwt/|6B9902874FFB0209D71ED9EB07886D5E|_|getDependencies|1|2|3|4|0|
+   
+   
    /**
     * get the url
     * @return {string} the base url
