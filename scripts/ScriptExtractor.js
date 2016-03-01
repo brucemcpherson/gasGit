@@ -35,8 +35,14 @@ function ScriptExtractor(dapi,  extractPath) {
   };
 
   var self = this;
+  
   // this is the drive object to use. access token should be already set up
   dapi_ = dapi;
+  
+  // error 500 occurs occassionally...
+  dapi_.setLookAhead( function(response,attempt) {
+    return response.getResponseCode() === 500 & attempt < 3;
+  });
   
   self.setSearch = function (searchPath) {
     searchPath_ = searchPath;
@@ -261,6 +267,7 @@ function ScriptExtractor(dapi,  extractPath) {
    */
   self.getFileContent = function (id, folderTitle, fileName) {
     // now get the media content
+    
     var content = dapi_.getContentById(id);
     if (!content.success) {
       throw "error getting " + fileName + " content for " + folderTitle + ":" + JSON.stringify(content);
