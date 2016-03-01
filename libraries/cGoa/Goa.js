@@ -246,7 +246,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * kill the package
    */
   self.kill = function () {
-    GoaApp.kill(package_);
+    GoaApp.killPackage(package_);
     return self.writePackage();
   };
   
