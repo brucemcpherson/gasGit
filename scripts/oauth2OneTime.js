@@ -12,7 +12,7 @@ function oneTimeSetProperties () {
 
   cGoa.GoaApp.setPackage (propertyStore , { 
     clientId : "xxx.apps.googleusercontent.com",
-    clientSecret : "CH1l3wW6lZofc0jX2OR6iBvi",
+    clientSecret : "xxx",
     scopes : cGoa.GoaApp.scopesGoogleExpand (['drive','drive.scripts']),
     service: 'google',
     packageName: 'script'
