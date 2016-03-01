@@ -5,7 +5,7 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cDriveJsonApi',
-      version:'0.0.1',
+      version:'0.0.5',
       key:'MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j',
       description:'drive sdk json API for apps script',
       share:'https://script.google.com/d/1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx/edit?usp=sharing'
@@ -49,6 +49,16 @@ function DriveJsonApi () {
    * DriverJsonApi.setAccessToken(doGetPattern({} , constructConsentScreen, function (token) { return token; },'script'))
    */
   self.accessToken= null;
+  var lookAhead_ = null;
+  
+  /**
+   * set a lookahead for a get
+   * @param {function} fun the lookahead function
+   * @return {cDriveJsonApi} self
+   */
+  self.setLookAhead = function (fun) {
+    lookAhead_ = fun;
+  };
   
   self.getEnums = function () {
     return ENUMS;
@@ -387,7 +397,7 @@ function DriveJsonApi () {
   * @return {HTTPResponse}
   */
   self.urlGet = function (url) {
-    return cUrlResult.urlGet(url, self.accessToken);
+    return cUrlResult.urlGet(url, self.accessToken , undefined, lookAhead_);
   };
 
  /**
