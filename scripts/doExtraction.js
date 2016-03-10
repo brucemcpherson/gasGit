@@ -43,7 +43,8 @@ function doExtraction () {
  */
 function getExtractor () {
   return new ScriptExtractor(
-    new cDriveJsonApi.DriveJsonApi().setAccessToken(getAccessToken('script')), 
+    new cDriveJsonApi.DriveJsonApi()
+    .setAccessToken(getAccessToken('script')), 
     SETTINGS.EXTRACT.TO
   );
 }
