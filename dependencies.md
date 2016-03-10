@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 01 March 2016 13:28:11 GMT by GasGit
+This repo (gasGit) was automatically updated on 10 March 2016 14:12:27 GMT by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
@@ -24,7 +24,7 @@ goa| server_js
 --- | --- | --- | --- | --- | --- 
 cNamedLock| cNamedLock|Mpv7vUR0126U53sfSMXsAPai_d-phDA33|15|no|[here](libraries/cNamedLock "library source")
 cGoa| cGoa|MZx5DzNPsYjVyZaR67xXJQai_d-phDA33|7|no|[here](libraries/cGoa "library source")
-cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|13|no|[here](libraries/cDriveJsonApi "library source")
+cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|14|no|[here](libraries/cDriveJsonApi "library source")
 cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|23|no|[here](libraries/cDependencyService "library source")
 cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|39|no|[here](libraries/cUseful "library source")
 cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|16|no|[here](libraries/cUrlResult "library source")
@@ -35,7 +35,7 @@ cNamedLock| cNamedLock|Mpv7vUR0126U53sfSMXsAPai_d-phDA33|15|no|[here](libraries/
 cCacheHandler| cCacheHandler|M3reA5eBxtwxSqCEgPywb9ai_d-phDA33|15|no|[here](libraries/cCacheHandler "library source")
 cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|32|no|[here](libraries/cUseful "library source")
 cGoa| cGoa|MZx5DzNPsYjVyZaR67xXJQai_d-phDA33|7|no|[here](libraries/cGoa "library source")
-cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|13|no|[here](libraries/cDriveJsonApi "library source")
+cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|14|no|[here](libraries/cDriveJsonApi "library source")
 cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|16|no|[here](libraries/cUrlResult "library source")
 cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|23|no|[here](libraries/cDependencyService "library source")
 ### Enabled Google Services
