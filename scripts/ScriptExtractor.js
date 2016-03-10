@@ -39,9 +39,10 @@ function ScriptExtractor(dapi,  extractPath) {
   // this is the drive object to use. access token should be already set up
   dapi_ = dapi;
   
-  // error 500 occurs occassionally...
+  // error 500/403 occurs occassionally...
   dapi_.setLookAhead( function(response,attempt) {
-    return response.getResponseCode() === 500 & attempt < 3;
+    var code = response.getResponseCode();
+    return (code === 500 && attempt < 3 ) || code === 403;
   });
   
   self.setSearch = function (searchPath) {
@@ -100,6 +101,7 @@ function ScriptExtractor(dapi,  extractPath) {
     if(!scriptRoot) {
       throw 'could not find starting folder for scripts ' + searchPath_;
     }
+    Logger.log('Looking in ' + searchPath_);
     
     // get all the scripts below this
     var result = dapi_.getRecursiveChildItems (scriptRoot.id, dapi_.getEnums().MIMES.SCRIPT  ,  "'me' in owners");
