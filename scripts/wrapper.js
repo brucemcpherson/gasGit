@@ -26,6 +26,25 @@ function wrapper () {
     
   });
 }
+
+function youtubeWrapper () {
+
+
+  var folders = [
+    {path:'/books/youtube/repo'}
+  ];
+  
+  folders.forEach(function(d) {
+    if (d.path) {
+      SETTINGS.EXTRACT.TO = d.path + '/source';
+      SETTINGS.PARENT.SCRIPTS = [d.path];
+      
+      doExtraction();
+      doLibraries(); 
+    }
+  });
+
+}
 /**
  * if you want to use the regular git client,
  * you can do this to create a folder from 
