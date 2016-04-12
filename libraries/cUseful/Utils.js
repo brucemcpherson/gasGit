@@ -36,6 +36,7 @@ var Utils = (function (ns) {
       }
     });
     
+    
     // for recursion
     attempts = attempts || 1;
     
@@ -49,6 +50,22 @@ var Utils = (function (ns) {
       throw ns.errorStack("you need to specify a function for rateLimitBackoff to execute");
     }
     
+    function waitABit (theErr) {
+      
+      //give up?
+      if (attempts > options.maxAttempts) {
+        throw errorStack(theErr + " (tried backing off " + (attempts-1) + " times");
+      }
+      else {
+        // wait for some amount of time based on how many times we've tried plus a small random bit to avoid races
+        Utilities.sleep (
+          Math.pow(2,attempts)*options.sleepFor + 
+          Math.round(Math.random() * options.sleepFor)
+        );
+        
+      }
+    }
+    
     // try to execute it
     try {
       var response = callBack(options, attempts);
@@ -58,7 +75,7 @@ var Utils = (function (ns) {
         if(options.logAttempts) { 
           Logger.log("backoff lookahead:" + attempts);
         }
-        waitAbit();
+        waitABit('lookahead:');
         return ns.expBackoff ( callBack, options, attempts+1) ;
         
       }
@@ -74,7 +91,7 @@ var Utils = (function (ns) {
       
       // failed due to rate limiting?
       if (options.checker(err)) {
-        waitABit();
+        waitABit(err);
         return ns.expBackoff ( callBack, options, attempts+1) ;
       }
       else {
@@ -83,24 +100,9 @@ var Utils = (function (ns) {
       }
     }
     
-    function waitAbit () {
-
-      //give up?
-      if (attempts > options.maxAttempts) {
-        throw errorStack(err + " (tried backing off " + (attempts-1) + " times");
-      }
-      else {
-        // wait for some amount of time based on how many times we've tried plus a small random bit to avoid races
-        Utilities.sleep (
-          Math.pow(2,attempts)*options.sleepFor + 
-          Math.round(Math.random() * options.sleepFor)
-        );
-        
-      }
-      
-    }
-  }
     
+  }
+  
   /**
   * get the stack
   * @param {Error} e the error
@@ -119,7 +121,7 @@ var Utils = (function (ns) {
   
   // default checker
   function errorQualifies (errorText) {
-
+    
     return ["Exception: Service invoked too many times",
             "Exception: Rate Limit Exceeded",
             "Exception: Quota Error: User Rate Limit Exceeded",
@@ -139,18 +141,20 @@ var Utils = (function (ns) {
     
   }
   
+  
+  
   /**
-   * convert a data into a suitable format for API
-   * @param {Date} dt the date
-   * @return {string} converted data
-   */
+  * convert a data into a suitable format for API
+  * @param {Date} dt the date
+  * @return {string} converted data
+  */
   ns.gaDate = function  (dt) {
     return Utilities.formatDate(
       dt, Session.getScriptTimeZone(), 'yyyy-MM-dd'
     );
   }
   
-   /** 
+  /** 
   * execute a regex and return the single match
   * @param {Regexp} rx the regexp
   * @param {string} source the source string
@@ -174,7 +178,7 @@ var Utils = (function (ns) {
     var t = s.toString().toLowerCase();
     return t === "yes" || "y" || "true" || "1";
   };
-   
+  
   /** 
   * check if item is undefined
   * @param {*} item the item to check
@@ -183,7 +187,7 @@ var Utils = (function (ns) {
   ns.isUndefined = function (item) {
     return typeof item === 'undefined';
   };
-   
+  
   /** 
   * isObject
   * check if an item is an object
@@ -193,7 +197,7 @@ var Utils = (function (ns) {
   ns.isObject = function (obj) {
     return obj === Object(obj);
   };
-    
+  
   /** 
   * checksum
   * create a checksum on some string or object
@@ -213,6 +217,97 @@ var Utils = (function (ns) {
     return c;
   };
   
-
+  /**
+  * @param {[*]} arguments unspecified number and type of args
+  * @return {string} a digest of the arguments to use as a key
+  */
+  ns.keyDigest = function () {
+    // conver args to an array and digest them
+    return Utilities.base64Encode (
+      Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_1,Array.prototype.slice.call(arguments).map(function (d) {
+        return (Object(d) === d) ? JSON.stringify(d) : d.toString();
+      }).join("-")));
+  };
+  
+  /**
+  * creates a  closure function to categorize values
+  * @param {...var_arg} arguments takes any number of arguments
+  * @return {function} a closure function
+  */
+  ns.categorize = function (var_arg) {
+    
+    //convert the arguments to an array after sorting
+    var domain_ = Array.prototype.slice.call(arguments);
+    
+    // prepare some default labels
+    var labels_ = domain_.map (function (d,i,a) {
+      return (i ? '>= ' + a[i-1] + ' ' : '' ) + '< ' + d ;
+    });
+    
+    // last category
+    labels_.push (domain_.length ? ('>= ' + domain_[domain_.length-1]) : 'all');
+    
+    /**
+    * gets the category given a domain
+    * @param {*} value the value to categorize
+    * @return {number} the index in the domain
+    */
+    function getCategory (value) {
+      var index = 0;
+      while (domain_[index] <= value) {
+        index++;
+      }
+      return index;
+    }
+    
+    
+    // closure function
+    return function (value) { 
+      
+      return Object.create(null, {
+        index:{
+          get:function () {
+            return getCategory(value);
+          }
+        },
+        label:{
+          get:function () {
+            return labels_[getCategory(value)];
+          }
+        },
+        labels:{
+          get:function () {
+            return labels_;
+          },
+          set:function (newLabels) {
+            if (domain_.length !== newLabels.length-1) {
+              throw 'labels should be an array of length ' + (domain_.length+1);
+            }
+            labels_ = newLabels;
+          }
+        },
+        domain:{
+          get:function () {
+            return domain_;
+          }
+        },
+        toString:{
+          value:function (){
+            return this.label;
+          }
+        }
+      }); 
+    };
+  }
+  
+  /**
+  * digest a blob
+  * @param {Blob} blob the blob
+  * @return {string} the sha1 of the blob
+  */
+  ns.blobDigest = function(blob) {
+    return ns.keyDigest(Utilities.base64Encode(blob.getBytes()));
+  };
+  
   return ns;
 }) (Utils || {});
