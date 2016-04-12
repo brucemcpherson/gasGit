@@ -77,7 +77,16 @@ function doGit() {
   
     if (d.committedDate < d.modifiedDate || !d.committedDate) {
       // find the repo - it should exist since we would have created it
-      var repo = findRepo (d , repos);
+      var repo = cUseful.Utils.expBackoff ( function () {
+        return findRepo (d , repos);
+        
+      }, {
+        // if we dont have a repo try a few times, because git sometimes comes back before repo can be found
+        lookAhead: function (response,attempt) {
+          return attempt < 4 && !response;
+        }
+      });
+                                          
       if (!repo) {
         throw 'should have found repo ' + d.repo;
       }
