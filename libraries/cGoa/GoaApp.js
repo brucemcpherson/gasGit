@@ -114,6 +114,42 @@ var GoaApp = (function (goaApp) {
       return propertyStore.deleteProperty(goaApp.getPropertyKey(packageName));
     });
   };
+  
+    /**
+  * creates a package from a file for a service account
+  * @param {Drive-App} dap the drive-app
+  * @param {object} package info on how to populate the package
+  * @return {object}  the authentication package
+  */
+  goaApp.createPackageFromFile = function (dap , package) {
+  
+    // first check that the service is known and it's for a service account
+    if (goaApp.isServiceAccountType(package)){ 
+      throw 'service type for ' + package.service + ' should be a web account';
+    }
+    
+    // now get the json key data
+    var file = dap.getFileById(package.fileId);
+    if (!file) throw 'couldnt open file:' + package.fileId;
+    
+    // the file content
+    var content = cUseful.rateLimitExpBackoff(function () { 
+      return JSON.parse (file.getBlob().getDataAsString() );
+    });
+    
+    
+    // check its good
+    if (!content.web || !content.web.client_id || !content.web.client_secret) {
+      throw 'this is not a credentials file downloaded from the developers console'
+    }
+    
+    var p = cUseful.clone(package);
+    p.clientId = content.web.client_id;
+    p.clientSecret = content.web.client_secret;
+    return p;
+
+  };
+  
   /**
    * set the authentication package
    * @param {object} propertyStore where to find it
@@ -139,17 +175,17 @@ var GoaApp = (function (goaApp) {
   
   /**
   * creates a package from a file for a service account
-  * @param {DriveApp} driveApp the driveapp
+  * @param {Drive-App} dap the drive-app
   * @param {object} package info on how to populate the package
   * @return {object}  the authentication package
   */
-  goaApp.createServiceAccount = function (driveApp , package) {
+  goaApp.createServiceAccount = function (dap , package) {
   
     // first check that the service is known and it's for a service account
     if (!goaApp.isServiceAccountType(package))throw 'service type for ' + package.service + ' should be serviceaccount';
     
     // now get the json key data
-    var file = DriveApp.getFileById(package.fileId);
+    var file = dap.getFileById(package.fileId);
     if (!file) throw 'couldnt open file:' + package.fileId;
     
     // merge with existing package
@@ -179,6 +215,16 @@ var GoaApp = (function (goaApp) {
    */
   goaApp.getToken = function (package) {
     return goaApp.hasToken(package) ? package.access.accessToken : undefined;
+  };
+  
+  /**
+   * gets an arbirary property stored in a goa packages
+   * @param {object} package the authentication package
+   * @param {string} key the property key
+   * @return {string | undefined} the accesstoken
+   */
+  goaApp.getProperty = function (package,key) {
+    return package[key];
   };
   
   /**
@@ -486,6 +532,7 @@ var GoaApp = (function (goaApp) {
   };
   /**
   * sets the user property store to a clean package copied from the script store if it doesnt exist
+  * if the current property does not match the script one, it will be replaced anyway
   * @param  {string} packageName the package name
   * @param {PropertyStore} scriptPropertyStore where the credentials are
   * @param {PropertyStore} userPropertyStore where to put them
@@ -497,19 +544,36 @@ var GoaApp = (function (goaApp) {
     // get the userpacakage if there is one
     var userPackage = goaApp.getPackage(userPropertyStore, packageName);
     
-    // replace it with the script version
-    if (!userPackage || replace) {
-      var scriptPackage = goaApp.getPackage(scriptPropertyStore, packageName);
-      if (!scriptPackage) throw packageName + ' cannot be copied from script store as it is not there';
-      
+    // get the script package
+    var scriptPackage = goaApp.getPackage(scriptPropertyStore, packageName);
+    if (!scriptPackage) throw packageName + ' cannot be copied from script store as it is not there';
+    
+    // replace it with the script version if it has changed
+    if (!userPackage || replace || !samePackages(scriptPackage,userPackage)) {
+
       // kill token information
       goaApp.killPackage (scriptPackage);
       
-      // write tot user store
+      // write to user store
       goaApp.setPackage (userPropertyStore , scriptPackage);
       
     }
+    
+    // kill token information and compare
+    function samePackages( a, b) {
+      if (!a || !b) return false;
+      
+      var ca = goaApp.killPackage(cUseful.clone(a));
+      var cb = goaApp.killPackage(cUseful.clone(b));
+      
+      // remove the timestamp from each
+      ca.revised = cb.revised = 0;
+
+      return JSON.stringify(ca) === JSON.stringify(cb);
+    }
   };
+  
+  
   /**
    * the standard consent screen
    * these parameters can be used to consreuct a consent screen
