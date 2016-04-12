@@ -224,6 +224,14 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     return GoaApp.getToken (package_);
   };
   
+   /**
+   * get property
+   * @param {string} key the key
+   * @return {string | undefined} the property value
+   */
+  self.getProperty = function (key) {
+    return GoaApp.getProperty (package_ , key);
+  };
   /**
    * get package
    * @return {object | undefined} the package
