@@ -368,11 +368,12 @@ function DriveJsonApi () {
    * @return {object} {id:'xxxx'} or null
    */
   self.getFolderFromPath = function (path,optCreate)  {
+    
     return (path || "/").split("/").reduce ( function(prev,current) {
       if (prev && current) {
         // this gets the folder with the name of the current fragment
         var fldrs = self.getFoldersByName(prev.id,current,"items(id)");
-        if(!fldrs.success) {
+        if(!fldrs.success || true) {
           Logger.log(JSON.stringify(fldrs));
         }
         // see if it existed
