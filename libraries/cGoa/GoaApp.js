@@ -1,4 +1,7 @@
-
+// just a shortcut
+function make (packageName , propertyStore , e, optTimeout, impersonate) {
+  return GoaApp.createGoa (packageName , propertyStore , optTimeout, impersonate).execute(e);
+};
 /**
  * helpers for Goa oauth2 class
  * @namespace GoaApp
@@ -12,6 +15,7 @@ var GoaApp = (function (goaApp) {
   // a token needs at least this time left to be able to be used (max time a script can run)
   goaApp.gracePeriod = 1000 * 60 * 7;
   
+
   /**
   * create a goa class
   * @param {string} packageName the package name
@@ -60,7 +64,22 @@ var GoaApp = (function (goaApp) {
         }
         // something happened
         if (!goaApp.hasToken(package)) throw 'failed to get service account token:' + JSON.stringify(result.content);
-          
+         
+      }
+      
+      // maybe its a firebase token
+      else if (goaApp.isJwtType(package)) {
+        var ft = JWT.generateJWT ( goaApp.getProperty(package,'data') , package.clientSecret );
+        if (ft) {
+          // make it last 24 hours
+          package.access = {
+            accessToken:ft,
+            expires: new Date().getTime() + 60*1000*60*24
+          }
+        }
+        else {
+          throw 'failed to get jwt token';
+        }
       }
       
       // maybe we can refresh one
@@ -171,6 +190,16 @@ var GoaApp = (function (goaApp) {
   goaApp.isServiceAccountType = function (package) {
     var servicePackage = goaApp.getServicePackage ( package);
     return servicePackage.accountType === 'serviceaccount';
+  };
+  
+ /**
+  * creates a package from a file for a service account
+  * @param {object} package the authentication package
+  * @return {boolean}  whether its a jwt account
+  */
+  goaApp.isJwtType = function (package) {
+    var servicePackage = goaApp.getServicePackage ( package);
+    return servicePackage.accountType === 'firebase';
   };
   
   /**
