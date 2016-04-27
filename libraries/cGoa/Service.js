@@ -62,6 +62,9 @@ var Service = (function (service) {
       authUrl : "https://login.live.com/oauth20_authorize.srf",
       tokenUrl: "https://login.live.com/oauth20_token.srf",
       refreshUrl: "https://login.live.com/oauth20_token.srf",
+    },
+    firebase: {
+      accountType:'firebase'
     }
   };
   
