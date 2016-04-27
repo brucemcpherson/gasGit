@@ -10,17 +10,23 @@
  */
 function oneTimeSetProperties () {
 
+   // used by all using this script
+  var propertyStore = PropertiesService.getScriptProperties();
+ 
+  
+  cGoa.GoaApp.setPackage (propertyStore , 
+    cGoa.GoaApp.createPackageFromFile (DriveApp , {
+      packageName: 'script',
+      fileId:'0xxxxxxxxxxxc',
+      scopes : cGoa.GoaApp.scopesGoogleExpand (['drive','drive.scripts']),
+      service:'google'
+    }));
+  
+  
+  
   cGoa.GoaApp.setPackage (propertyStore , { 
-    clientId : "xxx.apps.googleusercontent.com",
-    clientSecret : "xxx",
-    scopes : cGoa.GoaApp.scopesGoogleExpand (['drive','drive.scripts']),
-    service: 'google',
-    packageName: 'script'
-  });
-
-  cGoa.GoaApp.setPackage (propertyStore , { 
-    clientId : "xxx",
-    clientSecret : "xxx",
+    clientId : "7xxxxxxxxxxxc",
+    clientSecret : "3xxxxxxxxxxxxxxd",
     scopes : [
       'gist',
       'repo'
