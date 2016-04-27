@@ -65,7 +65,12 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
         cUseful.applyDefault(timeout_, GoaApp.getServicePackage(package_).defaultDuration || 0)));
      
 
-    // if we have a token or can use a refresh to get one, our work is done
+    // if we have a token our work is done
+    if (self.hasToken() ) {
+      return self;
+    }
+    
+    // try to get one.
     GoaApp.start (package_, undefined, impersonate_, timeout_ );
     
     if (GoaApp.hasToken(package_)) {
