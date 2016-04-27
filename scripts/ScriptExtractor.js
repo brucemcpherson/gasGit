@@ -97,12 +97,12 @@ function ScriptExtractor(dapi,  extractPath) {
   self.getAllMyScripts = function () {
     
     // get the folder where the scripts start from
+
     var scriptRoot = dapi_.getFolderFromPath (searchPath_);
     if(!scriptRoot) {
       throw 'could not find starting folder for scripts ' + searchPath_;
     }
-    Logger.log('Looking in ' + searchPath_);
-    
+
     // get all the scripts below this
     var result = dapi_.getRecursiveChildItems (scriptRoot.id, dapi_.getEnums().MIMES.SCRIPT  ,  "'me' in owners");
     return result;
