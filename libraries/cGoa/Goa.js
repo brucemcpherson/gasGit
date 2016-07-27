@@ -215,10 +215,11 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
   };
   /**
    * test for token
+   * @param {boolean} check whether to check against infra
    * @return {boolean} there is one or not
    */
-  self.hasToken = function () {
-    return GoaApp.hasToken (package_);
+  self.hasToken = function (check) {
+    return GoaApp.hasToken (package_,check);
   };
   
   /**
