@@ -14,7 +14,7 @@ function getLibraryInfo () {
   return { 
     info: {
       name:'cGoa',
-      version:'0.0.11',
+      version:'0.0.20',
       key:'MZx5DzNPsYjVyZaR67xXJQai_d-phDA33',
       description:'simple library for google oauth2',
       share:'https://script.google.com/d/14sGrM0uhamXv89jexZByhH55fjuC7JA6mooKN52b6vendfTX5OFRgCi7/edit?usp=sharing'
