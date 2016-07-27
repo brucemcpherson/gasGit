@@ -13,12 +13,14 @@ var Service = (function (service) {
       authUrl : "https://www.googleapis.com/oauth2/v3/token",
       tokenUrl: "https://www.googleapis.com/oauth2/v3/token",
       defaultDuration:600,
-      accountType:'serviceaccount'
+      accountType:'serviceaccount',
+      checkUrl:"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token="
     },
     "google": {
       authUrl : "https://accounts.google.com/o/oauth2/auth",
-      tokenUrl: "https://accounts.Google.Com/o/oauth2/token",
-      refreshUrl: "https://accounts.google.com/o/oauth2/token"  
+      tokenUrl: "https://accounts.google.com/o/oauth2/token",
+      refreshUrl: "https://accounts.google.com/o/oauth2/token",
+      checkUrl: "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token="
     },
     "linkedin": {
       authUrl : "https://www.linkedin.com/uas/oauth2/authorization",
