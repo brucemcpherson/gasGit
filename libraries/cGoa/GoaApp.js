@@ -181,6 +181,7 @@ var GoaApp = (function (goaApp) {
    * @return {object}  the authentication package
    */
   goaApp.setPackage = function (propertyStore, package) {
+   
     cUseful.rateLimitExpBackoff( function () { 
       return propertyStore.setProperty(goaApp.getPropertyKey(package.packageName) , JSON.stringify (package)); 
     });
@@ -423,7 +424,7 @@ var GoaApp = (function (goaApp) {
    * @return {string} the redirect url
    */
   goaApp.createRedirectUri = function () {
-    return 'https://script.google.com/macros/d/' + ScriptApp.getProjectKey() + '/usercallback'
+    return 'https://script.google.com/macros/d/' + ScriptApp.getScriptId() + '/usercallback'
   };
   
  
@@ -597,7 +598,17 @@ var GoaApp = (function (goaApp) {
     var result = getCache_().get (KEY_PREFIX+id);
     return result ? JSON.parse(result) : null;
   };
+  goaApp.invalidate = function (propertyStore, packageName) {
   
+    var package = goaApp.getPackage(propertyStore, packageName);
+    if (!package) {
+      throw packageName + ' not found in given propertystore';
+    }
+    
+    goaApp.killPackage (package);
+    return goaApp.setPackage (propertyStore, package);
+    
+  }
   /**
    * expand scopes from allowed google shortcuts
    * @param {[string]} scopes an array of potential shortnames
