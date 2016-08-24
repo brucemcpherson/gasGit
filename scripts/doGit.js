@@ -83,7 +83,7 @@ function doGit() {
       }, {
         // if we dont have a repo try a few times, because git sometimes comes back before repo can be found
         lookahead: function (response,attempt) {
-          Logger.log(reponse);
+          Logger.log(response);
           return attempt < 4 && !response;
         }
       });
