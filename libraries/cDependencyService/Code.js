@@ -78,6 +78,7 @@ function DependencyService() {
         var pos = content.indexOf (c);
         var v = c.match(/(\/)([^\/]+)(\/https:%2F%)/);
         var version = v && v.length > 2 ? v[2] : 'unknown';
+
         p.push ( {
           library:content[pos+2],
           identifier:content[pos+2],
@@ -99,6 +100,7 @@ function DependencyService() {
         var key = k && k.length > 2 ? k[2] : 'unknown';
         var v = c.match(/\d+$/);
         var version = v && v.length ? v[0] : 'unknown';
+
         p.push ( {
           library:content[pos+2],
           identifier:content[pos+2],
