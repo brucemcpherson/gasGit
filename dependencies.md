@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 24 August 2016 09:59:56 BST by GasGit
+This repo (gasGit) was automatically updated on 16 October 2016 15:32:23 BST by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
@@ -20,11 +20,12 @@ doGit| server_js
 wrapper| server_js
 goa| server_js
 debug| server_js
+Distribute| server_js
 ### Directly referenced libraries
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
 cUrlResult| cUrlResult|M59PE-C_VqcthwNDmXB9gsCz3TLx7pV4j|16|no|[here](libraries/cUrlResult "library source")
-cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|58|no|[here](libraries/cUseful "library source")
+cUseful| cUseful|Mcbr-v4SsYKJP7JMohttAZyz3TLx7pV4j|68|no|[here](libraries/cUseful "library source")
 cDriveJsonApi| cDriveJsonApi|MvIo2UPbHoLDhAVcRHrI-VSz3TLx7pV4j|14|no|[here](libraries/cDriveJsonApi "library source")
 cDependencyService| cDependencyService|Me90hDkr73ajS2dd-CDc4V6i_d-phDA33|24|no|[here](libraries/cDependencyService "library source")
 cGoa| cGoa|MZx5DzNPsYjVyZaR67xXJQai_d-phDA33|22|no|[here](libraries/cGoa "library source")
