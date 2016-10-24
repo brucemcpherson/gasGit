@@ -1,5 +1,9 @@
 "use strict";
-
+function triggerBatch(){
+  doExtraction();
+  doLibraries();
+  doGit();
+}
 
 /**
  * RUN FIRST
