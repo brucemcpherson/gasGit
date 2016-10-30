@@ -7,7 +7,6 @@ function triggerBatch(){
 
 /**
  * RUN FIRST
- * CAN BE RUN IN Paralell or restarted as it uses locking
  *
  * examine all the scripts owned by me on drive
  * extract their source code id they've been updated after the current contents of the script dump
