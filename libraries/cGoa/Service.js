@@ -65,6 +65,22 @@ var Service = (function (service) {
       tokenUrl: "https://login.live.com/oauth20_token.srf",
       refreshUrl: "https://login.live.com/oauth20_token.srf",
     },
+    "paypal_sandbox": {
+      authUrl : "https://api.sandbox.paypal.com/v1/oauth2/token",
+      tokenUrl: "https://api.sandbox.paypal.com/v1/oauth2/token",
+      refreshUrl: "https://api.sandbox.paypal.com/v1/oauth2/token",
+      basic:true,
+      accountType:"credential",
+      accept: "application/json"
+    },
+    "paypal_live": {
+      authUrl : "https://api.paypal.com/v1/oauth2/token",
+      tokenUrl: "https://api.paypal.com/v1/oauth2/token",
+      refreshUrl: "https://api.paypal.com/v1/oauth2/token",
+      basic:true,
+      accountType:"credential",
+      accept: "application/json"
+    },
     firebase: {
       accountType:'firebase'
     }
