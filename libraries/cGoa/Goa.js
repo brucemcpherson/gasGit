@@ -96,7 +96,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
       GoaApp.cachePut ( id_ , package_.packageName , params_, onToken_);
       var offline = cUseful.applyDefault(package_.offline, true);
       
-      needsConsent_ = consentScreen_ || GoaApp.defaultConsentScreen ( GoaApp.createAuthenticationUri ( 
+      needsConsent_ = (consentScreen_ || GoaApp.defaultConsentScreen) ( GoaApp.createAuthenticationUri ( 
         package_, {
           callback : callback_,
           timeout: timeout_,
