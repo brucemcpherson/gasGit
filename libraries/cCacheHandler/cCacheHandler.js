@@ -137,7 +137,7 @@ function CacheHandler (optSeconds,optSiloId,optPrivate,optDisableCache,optSpecif
               });
             }
             else {
-              var o =  cache.put ( k,chunk,expiry * 1.2);
+              var o =  cache.put ( k,chunk,Math.min(60*6*60,expiry * 1.2));
             }
 
           }
@@ -158,7 +158,7 @@ function CacheHandler (optSeconds,optSiloId,optPrivate,optDisableCache,optSpecif
           });
         }
         else {
-          cache.put (s, JSON.stringify(ob));
+          cache.put (s, JSON.stringify(ob),expiry);
         }
         return s;
       }
