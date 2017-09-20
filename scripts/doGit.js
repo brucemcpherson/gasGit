@@ -11,6 +11,7 @@ function doGit() {
 
 // this is the extractor handle
   var extractor = getExtractor();
+
   
   // get all the info files
   var result  = extractor.getAllTheInfos();
@@ -18,6 +19,7 @@ function doGit() {
     throw 'failed to get all the infos ' + JSON.stringify(result);
   }
   var infos = result.data.content;
+  
   
   // get a git handle
   var git = new GasGit(extractor).setAccessToken( getAccessToken('gasgit'));
