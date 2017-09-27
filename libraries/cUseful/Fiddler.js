@@ -176,6 +176,7 @@ function Fiddler(sheet) {
   self.mapRows = function(func) {
     
     dataOb_ = dataOb_.map(function(row, rowIndex) {
+      var rowLength = Object.keys(row).length;
       var result = (checkAFunc(func) || functions_.mapRows)(row, {
         name: rowIndex,
         data: dataOb_,
@@ -189,11 +190,17 @@ function Fiddler(sheet) {
         row: row
       });
       
-      if (!result || result.length !== row.length) {
+      if (!result || typeof result !== "object") {
+        throw new Error ("you need to return the row object - did you forget?");
+      }
+      
+      if (Object.keys(result).length !== rowLength) {
         throw new Error(
           'you cant change the number of columns in a row during map items'
         );
       }
+      
+      
       return result;
     });
     
@@ -326,6 +333,16 @@ function Fiddler(sheet) {
     });
     
   };
+  /**
+   * sort returns sorted values
+   * for chaining , can be handy to return the fiddler
+   */
+  self.sortFiddler = function (name , descending , auxFiddler ) {
+    var data = self.sort (name , descending , auxFiddler);
+    self.setData (data);
+    return self;
+  }
+  
   self.handySort = function (displayValues, options) {
     // default comparitor & extractor
     options = options || {};
@@ -768,7 +785,7 @@ function Fiddler(sheet) {
         if (Object.keys(data[i]).some(function(d) {
           return !e.hasOwnProperty(d);
         })) {
-          throw new Error('unknown columns in row data to insert');
+          throw new Error('unknown columns in row data to insert:' + JSON.stringify(Object.keys(data[i])));
         }
         
       });
@@ -901,7 +918,8 @@ function Fiddler(sheet) {
   self.setData = function(dataOb) {
     
     // need to calculate new headers
-    headerOb_ = dataOb.reduce(function(hob, row) {
+    
+    headerOb_ = (dataOb || []).reduce(function(hob, row) {
       Object.keys(row).forEach(function(key) {
         if (!hob.hasOwnProperty(key)) {
           hob[key] = Object.keys(hob).length;
