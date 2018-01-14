@@ -199,6 +199,12 @@ var GoaApp = (function (goaApp) {
    */
   goaApp.setPackage = function (propertyStore, package) {
    
+    // check a few things - this fail if unknown type
+    var sp = goaApp.getServicePackage (package);
+    
+    // check we have a name
+    if (!package.packageName) throw 'package must have a name';
+    
     cUseful.rateLimitExpBackoff( function () { 
       return propertyStore.setProperty(goaApp.getPropertyKey(package.packageName) , JSON.stringify (package)); 
     });
@@ -378,6 +384,14 @@ var GoaApp = (function (goaApp) {
    */
   goaApp.getServicePackage = function (package) {
     var p = Service.package[package.service];
+    
+    // support custom service
+    if (!p && package.service === "custom") {
+     if (typeof package.serviceParameters !== typeof {}) {
+        throw 'custom service needs a serviceParameters object as a property';
+     }
+     p = package.serviceParameters;
+    }
     if (!p) throw 'service provider ' + package.service + ' is not known';
     return p;
   };
@@ -694,6 +708,46 @@ var GoaApp = (function (goaApp) {
     }
   };
   
+  // these are used to include their code in the consentscreen
+  function handleCon(con) {  
+    var o=document.getElementById("conAnchor");
+    var newUrl=o.href.toString().replace(/access_type=\\w+/, "access_type=" + (con.checked ? "off" :"on") + "line");
+    o.setAttribute ("href", newUrl);
+  }
+  
+  goaApp.closeWindow = function (hasToken , opts) {
+    var script = '<script>(' + handleClose.toString() + ')()</script>';
+ 
+    var mess = hasToken ? 
+      "<div>Successfully authentication - you can close this window</div>" : 
+      "<div>Unsuccessful authentication - failed to get token</div>";
+
+    return opts.close && hasToken ? script : mess;
+
+  };
+  
+   // this can be included in the generated code
+  function handleClose () {
+    
+    
+    if (google && google.script && google.script.host && typeof google.script.host.close === "function") {
+      google.script.host.close();
+    }
+    
+    else if (window.top && typeof window.top.close === "function") { 
+      window.top.close();
+    } 
+    
+    else if (document.getElementById("closetop"))
+    { 
+      document.getElementById("closetop").innerHTML="You can close this window now";
+    }
+    
+    else {
+      // don't know how to close window
+    }
+  }
+  
   
   /**
    * the standard consent screen
@@ -704,26 +758,33 @@ var GoaApp = (function (goaApp) {
    * @param {string} packageName the pckage name
    * @param {string} serviceName the service name
    * @param {boolean} offline whether offline access is allowed
+   * @param {object} options {close:false, showRedirect:true}
    * @return {string} the html code for a consent screen
    */
-  goaApp.defaultConsentScreen = function  (consentUrl,redirectUrl,packageName,serviceName,offline) {
+  goaApp.defaultConsentScreen = function  (consentUrl,redirectUrl,packageName,serviceName,offline, options) {
     
+    var opts = options ? JSON.parse(JSON.stringify(options)) : {};
+    opts.close = opts.hasOwnProperty ("close") ? opts.close : false;
+    opts.closeConsent = opts.hasOwnProperty ("closeConsent") ? opts.closeConsent : true;
+    opts.showRedirect = opts.hasOwnProperty ("showRedirect") ? opts.showRedirect : true;
+    
+    // this will close the consent screen
+    var close = opts.closeConsent ? handleClose.toString() : "";
+    
+    // can hide redirect if necessary
+    var redirect = opts.showRedirect ? 
+        '<div><label for="redirect">Redirect URI (for the developers console)</label></div>' + 
+        '<div><input class="redirect" type="text" id="redirect" value="' + redirectUrl + '" readonly size=' + redirectUrl.length + '></div>' :
+        '';
+        
     return '<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">' + 
       '<style>aside {font-size:.8em;} .strip {margin:10px;} .gap {margin-top:20px;} </style>' +
-      '<script>' +
-        'function handleCon(con) { ' +
-          'var o=document.getElementById("conAnchor");' +
-          'var newUrl=o.href.toString().replace(/access_type=\\w+/, "access_type=" + (con.checked ? "off" :"on") + "line");' +
-          'o.setAttribute ("href", newUrl);' +
-        '}' +
-      '</script>' +
+      '<script>' + handleCon.toString() + close + "</script>" + 
       '<div class="strip">' +
 
         '<h3>Goa has detected that authentication is required for a ' + serviceName + ' service</h3>' + 
           
-        '<div class="block"></div>' +
-        '<div><label for="redirect">Redirect URI (for the developers console)</label></div>' + 
-        '<div><input class="redirect" type="text" id="redirect" value="' + redirectUrl + '" readonly size=' + redirectUrl.length + '></div>' +
+        '<div class="block"></div>' + redirect +
 
         '<div class="gap">' +
           '<div><label><input type="checkbox" onclick="handleCon(this);"' + 
@@ -735,13 +796,14 @@ var GoaApp = (function (goaApp) {
         '</div>' +
           
         '<div class="gap">' +
-          '<a href = "' + consentUrl + '" target="_parent" id="conAnchor"><button id="start" class="action">Start</button></a>' +
+          '<a href = "' + consentUrl + '" id="conAnchor"  target="_parent"><button id="start" class="action" onclick="handleClose();">Start</button></a>' +
         '</div>' +
           
         '<div class="gap">' +
             '<aside>For more information on Goa see <a href="http://ramblings.mcpher.com/Home/excelquirks/oauthtoo">Desktop Liberation</aside>'+ 
         '</div>' + 
        '</div>'
+
   };
   
   /**
