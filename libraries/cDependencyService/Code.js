@@ -171,14 +171,21 @@ function DependencyService() {
   */
   self.getGwtDependencies = function () {
     var prop = JSON.parse(PropertiesService.getScriptProperties().getProperty("dependencyParams"));
-    
+    //url, optAccessToken,overrideOptions, optLookahead,optCache
     return cUrlResult.urlExecute( self.getDependencyUrl() , {
       method:"POST",
       muteHttpExceptions:true,
       payload:'7|1|4|' + self.getGwtUrl() + prop.tail, 
       headers: {'X-GWT-Permutation':prop.permutation},
       contentType:'text/x-gwt-rpc;charset=UTF-8'
-    }, self.accessToken);
+    }, 
+    self.accessToken, 
+    undefined , 
+    function(response,attempt) {
+      var code = response.getResponseCode();
+      return code === 409;
+    },
+    PropertiesService.getUserProperties());
     
   };
   
