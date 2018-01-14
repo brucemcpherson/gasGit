@@ -23,7 +23,8 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
       consentScreen_,
       name_,
       onToken_,
-      onTokenResult_;
+      onTokenResult_,
+      uiOpts_;
      
 
 
@@ -36,7 +37,16 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     if (typeof onTokenFunction !== 'function') throw 'ontoken callback must be a function'; 
     onToken_ = onTokenFunction;
     return self;
-  }
+  };
+  
+  /**
+   * any special UI options
+   * @param {object} opts
+   */
+  self.setUiBehavior = function (opts) {
+    uiOpts_ = opts;
+    return self;
+  };
   /**
   * execute the requested phase
   * @param {string} params the callback params or user params
@@ -50,6 +60,8 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     // the phase & id to execute is in the state token, if it exists
     phase_ = GoaApp.getCustomParameter(params_).goaphase || 'init';
     id_ = GoaApp.getCustomParameter(params_).goaid; 
+    
+    // the name 
     name_ = GoaApp.getName(params_);
     
     // load in the package on initialization
@@ -83,6 +95,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     }
     
     // apparently we don't have one, so need to enter a consent flow
+    // this is able to figure out which function is managing the goa flow
     if(!callback_) {
       self.setCallback (cUseful.whereAmI(2).caller);
     }
@@ -96,6 +109,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
       GoaApp.cachePut ( id_ , package_.packageName , params_, onToken_);
       var offline = cUseful.applyDefault(package_.offline, true);
       
+      // set up the consent screen
       needsConsent_ = (consentScreen_ || GoaApp.defaultConsentScreen) ( GoaApp.createAuthenticationUri ( 
         package_, {
           callback : callback_,
@@ -106,7 +120,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
           goaid:id_,
           goaphase:'fetch',
           goaname:package_.packageName
-        }) ,GoaApp.createRedirectUri(), package_.packageName, package_.service, offline);
+        }) ,GoaApp.createRedirectUri(), package_.packageName, package_.service, offline, uiOpts_);
 
       return self;
     }
@@ -116,7 +130,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
       
       var result = GoaApp.fetchAccessToken (package_ , params);
       if (!self.hasToken()) {
-        throw 'failed to exchange code for token ' + result.getContentText();
+        throw 'Failed to get access token : operation was cancelled';
       }
       
       // store it
@@ -175,6 +189,55 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
   self.getConsent = function () {
     return HtmlService.createHtmlOutput(needsConsent_);
   };
+  
+ 
+  self.done = function () {
+    // set up close message or go away.
+    return HtmlService.createHtmlOutput(
+      GoaApp.closeWindow(self.hasToken() ,uiOpts_ || {
+        close:false,
+      }));
+  };
+  
+  /**
+   * get consent in a sidebar/dialog
+   * @param {UI} ui the ui to use
+   * @param {object} opts {width:300 , title: "goa oauth2 dialog", type:"SIDEBAR" || "DIALOG" , modal:true }
+   */
+  self.getConsentUi = function (ui, opts) {
+
+    // clone
+    var options = opts ? JSON.parse(JSON.stringify(opts)) : {};
+    
+    options.type = options.type || "SIDEBAR";
+    options.width = options.type === "DIALOG" ? (options.width || 600) : 0;
+    options.height = options.type === "DIALOG" ? (options.height || 400) : 0;
+    options.title = options.hasOwnProperty("title") ? options.title : ' goa oauth2 dialog for ' + self.getPackage().packageName;
+    options.modal = options.hasOwnProperty("modal") ? options.modal : true;
+    
+    // set up the dialog. consent returns an htmlservice
+    var html = self.getConsent()
+      .setTitle(options.title);     
+      
+    
+    if (options.height)html.setHeight(options.height);
+    if (options.width)html.setWidth(options.width);
+    
+    // where to do it
+    if (options.type === "SIDEBAR") {
+      ui.showSidebar (html);
+    }
+    
+    else if (options.type === "DIALOG") {
+      ui[options.modal ? 'showModalDialog' : 'showModelessDialog'] (html, options.title);
+    }
+    
+    else {
+      throw 'unknown dialog type ' + options.type;
+    }
+    
+    return self;
+  }
   
   /**
    * get the consent page
