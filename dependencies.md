@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 31 October 2018 16:48:17 GMT by GasGit
+This repo (gasGit) was automatically updated on 31 October 2018 17:17:39 GMT by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
@@ -41,5 +41,7 @@ cCacheHandler| cCacheHandler|1U6j9t_3ONTbhTCvhjwANMcEXeHXr4shgzTG0ZrRnDYLcFl3_IH
 *library*|*identifier*|*version*
 --- | --- | --- 
 Drive| Drive|v2
+### Scopes required
+no scopes discovered
 ### Need more detail ?
 You can see [full project info as json here](info.json)
