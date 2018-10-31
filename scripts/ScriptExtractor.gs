@@ -149,6 +149,7 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
     "\n### Directly referenced libraries\n" + libTable("libraries") + 
     "\n### All dependencies and sub dependencies\n" + libTable("dependencies") + 
     "\n### Enabled Google Services\n" + gTable("google") + 
+    "\n### Scopes required\n" + sTable("scopes") +     
     '\n### Need more detail ?\nYou can see [full project info as json here](' + ENUMS.FILES.INFO +')\n'; 
     
     function libTable(prop) {
@@ -171,6 +172,14 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
           }).join("\n")) : "no libraries discovered") ;
     }
     
+    function sTable (prop) {
+      return  (content[prop] && content[prop].length ? (
+          "*scope*\n" +
+          "--- \n" +
+          content[prop].map(function(d) {
+            return d ;
+          }).join("\n")) : "no scopes discovered") ;
+    }
 
   };
   
@@ -443,7 +452,7 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
   self.getKnownDependencies = function (infos) {
   
     // get a ds handler - lets try using the access token of the drive api
-
+    // var ds = new cDependencyService.DependencyService().setAccessToken(dapi_.accessToken);
     
     // look at each porject
     infos.forEach(function(d) {
@@ -451,7 +460,6 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
       // get top level dependencies
       Logger.log('doing dependencies for ' + d.title);
 
-    
       // the manifest file should be here
       if (!d.manifestId) throw "manifestId missing for " + d.title;
       var content = self.getFileContent (d.manifestId , d.title , 'manifest file');
@@ -469,6 +477,7 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
           development: 0  // this is unknown TODO - check
         };
       });
+      d.scopes = deps.oauthScopes || [];
       d.google = (deps.enabledAdvancedServices || []).map (function (e) {
         return {
           library: e.userSymbol,
