@@ -1,0 +1,40 @@
+{
+  "timeZone": "Europe/London",
+  "dependencies": {
+    "enabledAdvancedServices": [{
+      "userSymbol": "Drive",
+      "serviceId": "drive",
+      "version": "v2"
+    }],
+    "libraries": [{
+      "userSymbol": "cUrlResult",
+      "libraryId": "1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM",
+      "version": "18"
+    }, {
+      "userSymbol": "cUseful",
+      "libraryId": "1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex",
+      "version": "94"
+    }, {
+      "userSymbol": "cDriveJsonApi",
+      "libraryId": "1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx",
+      "version": "14"
+    }, {
+      "userSymbol": "cGoa",
+      "libraryId": "1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2",
+      "version": "29"
+    }, {
+      "userSymbol": "cNamedLock",
+      "libraryId": "1uNcsHIUpZOJIT_ZedTa2mBE_gqCo0mH5OrNJMk4NWdyCNHQfiQjYXZ6u",
+      "version": "15"
+    }, {
+      "userSymbol": "cDependencyService",
+      "libraryId": "1QMZceXe24Rwfgw5jzXlqLsvoBLbmk_lvDBYB5K403wdTVeNu6-uzP5g8",
+      "version": "25"
+    }]
+  },
+  "webapp": {
+    "access": "MYSELF",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER"
+}
