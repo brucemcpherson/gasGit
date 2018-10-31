@@ -4,17 +4,12 @@
  */
 var SETTINGS = {
   EXTRACT: { // where to put the sources to
-    TO:"/Extraction/Scripts"
+    TO: "/Extraction/Scripts"
   },
   PARENT: {  // where to start looking for scripts
     SCRIPTS:[
       "/Published Scripts"
     ]
-  },
-  DEPENDENCY: { // things for dependency management
-    LIST: {
-      URL: "https://script.google.com/macros/s/AKfycbwZ2Hht93wTNzvRmYINYF7obaOHciBXWcP_wAiEtyGq70_x3cI/exec"
-    }
   },
   GIT: {
     COMMITTER: {
@@ -23,7 +18,9 @@ var SETTINGS = {
     },
     USERAGENT: "brucemcpherson",
     LIBRARIES: "libraries/",
-    SCRIPTS: "scripts/"
+    SCRIPTS: "scripts/",
+    ALL: false                   // overrides committed dates to do all found items - this'll take ages
   }
 };
+
 
