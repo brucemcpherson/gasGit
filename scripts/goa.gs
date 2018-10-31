@@ -2,7 +2,7 @@
 function doGet(e) {
 
   // i need these two
-  var fs = ['script','gasgit'] ;
+  var fs = ['gasgit'] ;
 
   
   // if we are being called back to get consent then the name of the package will be in the parameters
