@@ -30,12 +30,15 @@ function doGit() {
     throw 'failed to get all the repos ' + JSON.stringify(result);
   }
   var repos = result.data;
-
+  var starter = false;
+  
   // create any non existent repos
   infos.forEach(function(d){
+    // hack for starting at a given name for big reruns
+    // if (d.repo === "SlidesMerge") starter = true;
     
     // we'll only bother with this if the committed date is earlier than the modified date
-    if (d.committedDate < d.modifiedDate || !d.committedDate) {
+    if (d.committedDate < d.modifiedDate || !d.committedDate || SETTINGS.GIT.ALL  || starter) {
       // see if we know it
       var repo = findRepo(d,repos);
     
@@ -85,7 +88,6 @@ function doGit() {
       }, {
         // if we dont have a repo try a few times, because git sometimes comes back before repo can be found
         lookahead: function (response,attempt) {
-          Logger.log(response);
           return attempt < 4 && !response;
         }
       });
@@ -128,6 +130,7 @@ function doGit() {
         // if we find this , then we know it and can write the source
         var f = findInfo (m , infos) ;
         if (f) {
+          Logger.log ("found library " + m.library);
           f.modules.forEach(function(e) {
             var result = git.getAndCommitAFile (
               e.sourceId, 
@@ -138,7 +141,7 @@ function doGit() {
           
         }
         if ((!f && m.known) || (f && !m.known)) {
-          throw 'should have found library ' +  m.name + ' in repo ' + repo.name;
+          throw 'should have found library ' +  m.library + ' in repo ' + repo.name;
         }
       });
       
