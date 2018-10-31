@@ -178,8 +178,10 @@ function GasGit (extractor) {
        function (expResult) {
          // this is a checker to force an exponential backoff even if there isnt an http error thrown.
          // specifically to address this github http://stackoverflow.com/questions/19576601/github-api-issue-with-file-upload
-         return expResult.getResponseCode() === 409;
-
+         var cc = expResult.getResponseCode();
+         var bo = cc === 409 || cc === 500;
+         if (bo) Logger.log ('hit error github api error'+cc);
+         return bo;
        }
       );
     
