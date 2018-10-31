@@ -10,14 +10,16 @@
  * since it only porcesses changes, you can run it as many times as you like
  * @param {DriveJsonApi} dapi handler for drive
  * @param {string} extractPath where to extract to
+ * @param {ScriptApi} scriptApi (inititialized)
  * @return {ScriptExtractor} self
  */
-function ScriptExtractor(dapi,  extractPath) {
+function ScriptExtractor(dapi,  extractPath, scriptApi) {
   
   var ENUMS = {
     TYPES: {  // extensiona to apply to script types
-      server_js:"js",  
-      html:"html"
+      server_js:"gs",  
+      html:"html",
+      json:"json"
     },
     FIELDS: {  // partial response fields to return based on query
       SCRIPT: "items(id)",
@@ -35,6 +37,7 @@ function ScriptExtractor(dapi,  extractPath) {
   };
 
   var self = this;
+  var scriptApi_ = scriptApi;
   
   // this is the drive object to use. access token should be already set up
   dapi_ = dapi;
@@ -146,7 +149,7 @@ function ScriptExtractor(dapi,  extractPath) {
     "\n### Directly referenced libraries\n" + libTable("libraries") + 
     "\n### All dependencies and sub dependencies\n" + libTable("dependencies") + 
     "\n### Enabled Google Services\n" + gTable("google") + 
-    '\n###Need more detail ?\nYou can see [full project info as json here](' + ENUMS.FILES.INFO +')\n'; 
+    '\n### Need more detail ?\nYou can see [full project info as json here](' + ENUMS.FILES.INFO +')\n'; 
     
     function libTable(prop) {
     
@@ -338,15 +341,20 @@ function ScriptExtractor(dapi,  extractPath) {
     if (!oldInfo || oldInfo.modifiedDate < info.modifiedDate) {
       info.extracted = true;
       info.repo = cUseful.replaceAll(info.title," " ,"-") ;
-      
+      info.manifestId = "";
       
       // extraction process - write the modules
       info.modules.forEach(function (m,i) {
+          if (!ENUMS.TYPES[m.type]) throw m.type + ' is unknown type';
           m.sourceId = self.createAndPut (project.id , m.name + "." + ENUMS.TYPES[m.type] , source[i]);
           m.derivedSha = cUseful.makeSha1Hex(source[i]);
           m.fileName = m.name + "." + ENUMS.TYPES[m.type];
+          // put the manifest file id
+          if (m.type === "json") {
+            info.manifestId = m.sourceId; 
+          }
       });
-      
+      if (!info.manifestId) throw 'no manifest found for ' + info.title;
       // write the info file
       self.setUpdateTime(info);
       var content = self.putContent (dInfo.data.items[0].id, info.title, info );
@@ -387,92 +395,90 @@ function ScriptExtractor(dapi,  extractPath) {
   
     return scripts.map (function (d) {
      
+      var project = scriptApi_.getProjectByScriptId (d.id);
+      if ( project.error) throw project.error;
+      var projData = project.data[0];
       
-      // design in parallelism 
-    
-      // we'll use named locks to be able to share
-      //var lock = new cNamedLock.NamedLock().setKey("getInfosAndExtract",d.id);
+      // get the project content
+      var content = scriptApi_.getContent (d.id);
+      if ( content.error) throw project.error;
       
-      //if (lock.isLocked()) {
-      //  Logger.log('skipping ' + d.id + ' as its locked');
-     //}
+      // make info package
+      var info = {
+        title:projData.title,
+        id:projData.scriptId,
+        createdDate:new Date(projData.createTime).getTime(),
+        modifiedDate:new Date(projData.updateTime).getTime(),
+        version:0,       // n/a from script api
+        exportLinks:"nr", // not required from script api.
+        noticed:new Date().getTime()
+      };
       
-      //else {
-        //Logger.log('trying lock on ' + d.id);
-        //return lock.protect( d.id, function () {
-          // get the project file
-         
-          var project = dapi_.getFileById (d.id,self.getEnums().FIELDS.PROJECT);
-          if (!project.success) {
-            throw 'failed to get project ' + d.id + ':' + JSON.stringify(project);
-          }
-          
-          // create an info package
-          var info = Object.keys(project.data).reduce(function(p,c) {
-            // convert anything that looks like a date to a timestamp
-            var dc = new Date(project.data[c]).getTime();
-            p[c] = isNaN(dc) ? project.data[c] : dc;
-            return p;
-          },{});;
-          info.noticed = new Date().getTime();
-          
-          // now get the actual file, again limiting to only needed fields
-          var feed = dapi_.getFileContentByOb(project,self.getEnums().FIELDS.FEED);
-          if (!feed.success) {
-            throw 'failed to get feed ' + JSON.stringify(feed);
-          }
-          
-          var source = [];
-          // and get info on each of the modules
-          info.modules = feed.data.files.map (function (m) {
-            // dont want to put the source in the info summary file
-            source.push(m.source);
-            return Object.keys(m).reduce(function (p,c) {
-              if (c != 'source') {
-                p[c] =  m[c] ;
-              }
-              return p;
-            } ,{});
-          });
-          
-          // extract the sources
-          self.extract (info, source);
-          return info;
-        //}).result;
-      //}
+      // add the modules
+      info.modules = content.data.map (function (e) {
+        return {
+          id:"nr",
+          name:e.name,
+          type:e.type.toLowerCase()
+        };
+      });
+      var source = content.data.map (function (e) {
+        return e.source;
+      });
+      
+      
+      // extract the sources
+      self.extract (info, source);
+      return info;
+      
     });
   };
   
   /**
-   * use the gwt dependency service to get all known dependencies for all projects
+   * gwt depoendency service deprecated - it doesnt work any more
+   * using the scriptAPI
    * @param {array.object} infos the info.json for all known projects
    * @return {array.object} the updated infos
    */
   self.getKnownDependencies = function (infos) {
   
     // get a ds handler - lets try using the access token of the drive api
-    var ds = new cDependencyService.DependencyService().setAccessToken(dapi_.accessToken);
+
     
     // look at each porject
     infos.forEach(function(d) {
       
       // get top level dependencies
       Logger.log('doing dependencies for ' + d.title);
+
+    
+      // the manifest file should be here
+      if (!d.manifestId) throw "manifestId missing for " + d.title;
+      var content = self.getFileContent (d.manifestId , d.title , 'manifest file');
       
-      var deps = ds.setKey(d.id).getDependencies();
-      Logger.log(deps.data);
-      if(!deps.success) {
-        // the dependency service is flaky so don't fail, just log
-        Logger.log(deps);
-        deps.data = deps.data || {};
-        d.libraries = deps.data.custom || [];
-        d.google = deps.data.google || [];
-        Logger.log ('dependency service failed - see log');
-      }
-      else {
-        d.libraries = deps.data.custom;
-        d.google = deps.data.google;
-      }
+      // pick up deps from the manifest file - changes highlighted below
+      var deps = content.data.dependencies || {};
+      d.libraries = (deps.libraries || []).map (function (e) {
+        return {
+          library:e.userSymbol,  // cant tell the difference between lib and identified now.
+          identifier:e.userSymbol,
+          version: e.version,
+          key: e.libraryId,
+          sdc: e.userSymbol,      // this is no longer needed
+          known: false,
+          development: 0  // this is unknown TODO - check
+        };
+      });
+      d.google = (deps.enabledAdvancedServices || []).map (function (e) {
+        return {
+          library: e.userSymbol,
+          identifier: e.userSymbol,
+          sdc: e.serviceId,
+          development: 0,
+          version: e.version
+        };
+      });
+
 
     });
     
