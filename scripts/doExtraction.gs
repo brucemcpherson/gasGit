@@ -34,6 +34,9 @@ function doExtraction () {
     return cUseful.arrayAppend(p,scriptChunk.data.items);
   }, []);
   
+  // now scripts contains an array of {id:'xxx'} - these are what need to be processes
+  
+  
   // this does all the work - extracts all the sources and returns their infos
   var infos = extractor.getInfosAndExtract (scripts);
 
@@ -45,10 +48,21 @@ function doExtraction () {
  * @return {ScriptExtractor} the extractor
  */
 function getExtractor () {
+  
+  const scriptApi = new cScriptApi.ScriptApi()
+  .init (ScriptApp.getOAuthToken , UrlFetchApp, {
+    cacheCrusher:new cUseful.CrusherPluginCacheService()
+    .init ({
+      store:CacheService.getUserCache()
+    })
+  })
+  .enableCaching(true);
+  
   return new ScriptExtractor(
     new cDriveJsonApi.DriveJsonApi()
-    .setAccessToken(getAccessToken('script')), 
-    SETTINGS.EXTRACT.TO
+    .setAccessToken(ScriptApp.getOAuthToken()), 
+    SETTINGS.EXTRACT.TO,
+    scriptApi
   );
 }
 
