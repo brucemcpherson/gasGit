@@ -477,7 +477,7 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
           development: 0  // this is unknown TODO - check
         };
       });
-      d.scopes = deps.oauthScopes || [];
+      d.scopes = content.data.oauthScopes || [];
       d.google = (deps.enabledAdvancedServices || []).map (function (e) {
         return {
           library: e.userSymbol,
