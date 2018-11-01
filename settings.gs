@@ -18,7 +18,7 @@ var SETTINGS = {
     },
     USERAGENT: "brucemcpherson",
     LIBRARIES: "libraries/",
-    SCRIPTS: "scripts/",
+    SCRIPTS: "",
     ALL: false                   // overrides committed dates to do all found items - this'll take ages
   }
 };
