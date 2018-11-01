@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 31 October 2018 17:17:39 GMT by GasGit
+This repo (gasGit) was automatically updated on 01 November 2018 11:03:12 GMT by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
@@ -23,17 +23,17 @@ appsscript| json
 ### Directly referenced libraries
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
-cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|1|no|[here](libraries/cScriptApi "library source")
+cUseful| cUseful|1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex|102|no|[here](libraries/cUseful "library source")
 cGoa| cGoa|1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2|30|no|[here](libraries/cGoa "library source")
+cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|1|no|[here](libraries/cScriptApi "library source")
 cDriveJsonApi| cDriveJsonApi|1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx|14|no|[here](libraries/cDriveJsonApi "library source")
 cUrlResult| cUrlResult|1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM|18|no|[here](libraries/cUrlResult "library source")
-cUseful| cUseful|1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex|101|no|[here](libraries/cUseful "library source")
 ### All dependencies and sub dependencies
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
-cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|1|no|[here](libraries/cScriptApi "library source")
-cUseful| cUseful|1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex|101|no|[here](libraries/cUseful "library source")
+cUseful| cUseful|1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex|102|no|[here](libraries/cUseful "library source")
 cGoa| cGoa|1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2|30|no|[here](libraries/cGoa "library source")
+cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|1|no|[here](libraries/cScriptApi "library source")
 cDriveJsonApi| cDriveJsonApi|1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx|14|no|[here](libraries/cDriveJsonApi "library source")
 cUrlResult| cUrlResult|1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM|16|no|[here](libraries/cUrlResult "library source")
 cCacheHandler| cCacheHandler|1U6j9t_3ONTbhTCvhjwANMcEXeHXr4shgzTG0ZrRnDYLcFl3_IH2b2eAY|17|no|[here](libraries/cCacheHandler "library source")
