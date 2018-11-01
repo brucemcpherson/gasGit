@@ -42,8 +42,8 @@ cCacheHandler| cCacheHandler|1U6j9t_3ONTbhTCvhjwANMcEXeHXr4shgzTG0ZrRnDYLcFl3_IH
 --- | --- | --- 
 Drive| Drive|v2
 ### Scopes required
-*scope*
---- 
+*scope*|
+--- |
 https://www.googleapis.com/auth/script.external_request
 https://www.googleapis.com/auth/script.projects
 https://www.googleapis.com/auth/drive
