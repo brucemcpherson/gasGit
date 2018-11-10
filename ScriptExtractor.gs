@@ -174,8 +174,8 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
     
     function sTable (prop) {
       return  (content[prop] && content[prop].length ? (
-          "*scope*\n" +
-          "--- \n" +
+          "*scope*|\n" +
+          "--- |\n" +
           content[prop].map(function(d) {
             return d ;
           }).join("\n")) : "no scopes discovered") ;
