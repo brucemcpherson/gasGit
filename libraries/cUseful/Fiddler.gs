@@ -17,7 +17,9 @@ function Fiddler(sheet) {
       renameBlanks_ = true,
       blankOffset_ = 0,
       sheet_ = null,
-      headerFormat_ = {};
+      headerFormat_ = {},
+      columnFormats_ = null,
+      tidyFormats_ = false;
   
   /**
   * these are the default iteration functions
@@ -301,6 +303,73 @@ function Fiddler(sheet) {
   };
   
   /**
+   * sort out a list of column names and throw if any invalid
+   * @param {[string]} [columnNames] can be an array, single or undefined for all
+   * @return {[string]} an array of column names
+   */
+  function patchColumnNames_ ( columnNames ) {
+    // undefined columnNames means them all
+    // names can be a single column or an array
+    var headers = self.getHeaders(); 
+    columnNames = typeof columnNames === typeof undefined ? headers : (Array.isArray(columnNames) ? columnNames : [columnNames] );
+    var bad = columnNames.filter (function (d) {
+      return headers.indexOf (d) === -1;
+    });
+    if (bad.length) throw "these columnNames don't exist " + bad.join (",");
+    return columnNames;
+  }
+  
+  /**
+   * clear given column formats
+   */
+  self.clearColumnFormats = function (columnNames) {
+    columnFormats_ = columnFormats_ || {};
+    patchColumnNames_ (columnNames)
+    .forEach (function (d) {
+      columnFormats_ [d] = null;
+    });
+    return self;
+  };
+  /**
+   * get all known columnFormats
+   */
+  self.getColumnFormats = function () {
+    return columnFormats_;
+  };
+  
+  /**
+   * set tidy formats
+   * @param {boolean} tidyFormats whether to tidy formats in space outside the data being written
+   * @return self
+   */
+  self.setTidyFormats = function (tidyFormats) {
+    tidyFormats_ = tidyFormats;
+    return self;
+  };
+  
+  /**
+   * get tidy formats
+   * @return {boolean} tidyFormats whether to tidy formats in space outside the data being written
+   */
+  self.getTidyFormats = function () {
+    return tidyFormats;
+  };
+  /**
+   * set column format 
+   * @param {object} columnFormat eg{backgrounds:'string',fontColors:'string',wraps:boolean,fontWeights:'string'}
+   * @param {[string]} [columnNames=all] default is it applies to all current columns
+   * @return self
+   */
+  self.setColumnFormat = function (columnFormat, columnNames) {
+    // validate them
+    columnNames = patchColumnNames_ (columnNames);
+    // a non-null column format means we actually have an interest in columnformats
+    columnFormats_ = columnFormats_ || {};
+    // apply them
+    columnNames.forEach (function (d) { columnFormats_[d] = columnFormat });
+    return self;
+  };
+  /**
    * applies  formats
    * @param {object} format eg .. {backgrounds:'string',fontColors:'string',wraps:boolean,fontWeights:'string'}
    * @param {Range}
@@ -318,10 +387,12 @@ function Fiddler(sheet) {
             return format[f];
           })
         });
+       
         // check method exists and apply it
         var method = 'set'+f.slice(0,1).toUpperCase()+f.slice(1);
         if (typeof range[method] !== "function") throw 'unknown format ' + method;
         range[method](values);
+     
       });
     }
     return self;
@@ -338,14 +409,72 @@ function Fiddler(sheet) {
     format = format || headerFormat_;
     return self.setFormats (range.offset(0,0,1,self.getNumColumns()), headerFormat_); 
   };
+    
+  /**
+   * apply column formats
+   * @param {range} the start range
+   * @param {object} [format=columnFormats_] the format objects
+   * @return self;
+   */
+  self.applyColumnFormats = function (range )  {
+    if ( columnFormats_ ) {
+      // we'll need this later
+      var dr = range.getSheet().getDataRange();
+      /// make space for the header
+      if (self.hasHeaders() && dr.getNumRows()) {
+        dr = dr.offset (1,0,dr.getNumRows()-1);
+      }
+      if (Object.keys (columnFormats_).length === 0) {
+        // this means clear format for entire thing
+        dr.clearFormat();
+      }
+      else {
+        // first clear the bottom part of the sheet with no data
+        if (dr.getNumRows() > self.getNumRows()) {
+          dr.offset ( self.getNumRows() - dr.getNumRows() , 0 , dr.getNumRows() - self.getNumRows()).clearFormat();
+        }
+        
+        // TODO optimize common formats on adjacent columns to single set
+        // for now  1 at a time.
+        if (self.getNumRows() ) {
+          Object.keys(columnFormats_)
+          .forEach (function (d) {
+            var o = columnFormats_ [d];
+            // validate still exists
+            var h = self.getHeaders().indexOf(d);
+            if (h !== -1 ) {
+              // set the range for the data
+              var r = dr.offset (0,h, self.getNumRows() , 1);
+              if (!o) {
+                // its a clear
+                r.clearFormat();
+              }
+              else {
+                self.setFormats  (r, o);
+              }
+            }
+            else {
+              // delete it as column is now gone
+              delete columnFormats_[d];
+            }
+          });
+        }
+      }
+    }
+    else {
+      // there;'s no formatting to do
+    }
+    return self;
+    
+  }
   /**
    * get header format
    * @return self
    */
-  self.setHeaderFormat = function (headerFormat) {
-    headerFormat_ = headerFormat || {};
-    return self;
+  self.getHeaderFormat = function () {
+    return headerFormat_;
   };
+  
   /**
   * iterate through each row - nodifies the data in this fiddler instance
   * @param {function} [func] optional function that shoud return true if the row is to be kept
@@ -669,24 +798,61 @@ function Fiddler(sheet) {
   /**
    * dump values with default values 
    * @param {Sheet} [sheet=null] the start range to dump it to
+   * @param {object} options {skipFormats:,skipValues}
+   * @return self
    */
-  self.dumpValues = function (sheet) {
-
+  function dumpValues_ (sheet, options) {
+    
     if (!sheet && !sheet_) throw 'sheet not found to dump values to';
     var range =(sheet || sheet_).getDataRange();
-    range.clearContent();
+    if (!options.skipValues) range.clearContent();
 
     // we only do something if there's anydata
     var r = self.getRange(range);
     var v = self.createValues();
+
+    // we need to clear any formatting outside the ranges that may have been deleted
+    if (tidyFormats_ && !options.skipFormats) {
+      var rc = range.getNumColumns () > r.getNumColumns () && range.getNumRows() ? 
+        range.offset (0, r.getNumColumns () , range.getNumRows() , range.getNumColumns () - r.getNumColumns ()).getA1Notation() : "";
+      var rr = range.getNumRows () > r.getNumRows () && range.getNumColumns() ? 
+        range.offset (r.getNumRows () , 0,  range.getNumRows () - r.getNumRows ()).getA1Notation() : "";
+      var rl = [];
+      if (rc) rl.push (rc);
+      if (rr) rl.push (rr);
+      if (rl.length)range.getSheet().getRangeList (rl).clearFormat();
+    }
     
     // write out the sheet if there's anything
-    if (v.length && v[0].length) r.setValues (v);
+    if (!options.skipValues && v.length && v[0].length) r.setValues (v);
 
     // do header formats
-    if (v[0].length)self.applyHeaderFormat(range);
+    if (!options.skipFormats && v[0].length)self.applyHeaderFormat(range);
+    
+    // do column formats
+    if (!options.skipFormats) self.applyColumnFormats (range);
     
     return self;                       
+  };
+   /**
+   * dump values with default values 
+   * @param {Sheet} [sheet=null] the start range to dump it to
+   */
+  self.dumpValues = function (sheet) {
+    return dumpValues_ (sheet , {
+      skipFormats: false,
+      skipValues: false
+    });
+  };
+   /**
+   * dump values with default values 
+   * @param {Sheet} [sheet=null] the start range to dump it to
+   */
+  self.dumpFormats = function (sheet) {
+    return dumpValues_ (sheet , {
+      skipFormats: false,
+      skipValues: true
+    });
   };
   /**
   * get the range required to write the values starting at the given range
@@ -770,7 +936,7 @@ function Fiddler(sheet) {
     
     // check that the thing is ok to insert before
     if (columnOffset < 0 || columnOffset > self.getNumColumns()) {
-      throw new Error(header + ' doesnt exist to insert before');
+      throw new Error(insertBefore + ' doesnt exist to insert before');
     }
     
     // insert the column at the requested place
@@ -787,6 +953,8 @@ function Fiddler(sheet) {
       d[header] = '';
     });
     
+    // clear any formatting in that newly inserted column
+    self.setColumnFormat (null , header);
     return columnOffset;
   }
   /**
