@@ -19,7 +19,32 @@ function Fiddler(sheet) {
       sheet_ = null,
       headerFormat_ = {},
       columnFormats_ = null,
-      tidyFormats_ = false;
+      tidyFormats_ = false,
+      flatOptions_ = null,
+      defaultFlat = {
+        flatten:true,
+        objectSeparator:".",
+        itemSeparator:",",
+        expandArray: true,
+        columns:[]
+      };
+  
+  /**
+   * TODO .. its a long story because of formatting 
+   * work out details for next major version
+   *
+   * flattener works like this
+   * when writting to a sheet
+   * any objects get flattened 
+   *  {a:1,b:2,c:{d:3,e:{f:25}},g:[1,2,3]}
+   *  becomes  
+   *  header of a,b c.d c.e.f g.o g.1 g.2
+   *  values of 1 2 3 25 1 2 3
+   *  objectseparator(".") is used in headers as in "c.d" and "g.1" 
+   *  and itemSeparator is used in arrays where expandArray is true as in 1 2 3 versus 1,2,3 in a single column
+   * when reading from a sheet
+   *  headers are investigated for patterns like above and get shrunk back into objects/arrays
+   **/
   
   /**
   * these are the default iteration functions
@@ -311,7 +336,7 @@ function Fiddler(sheet) {
     // undefined columnNames means them all
     // names can be a single column or an array
     var headers = self.getHeaders(); 
-    columnNames = typeof columnNames === typeof undefined ? headers : (Array.isArray(columnNames) ? columnNames : [columnNames] );
+    columnNames = typeof columnNames === typeof undefined || columnNames === null ? headers : (Array.isArray(columnNames) ? columnNames : [columnNames] );
     var bad = columnNames.filter (function (d) {
       return headers.indexOf (d) === -1;
     });
@@ -369,6 +394,26 @@ function Fiddler(sheet) {
     columnNames.forEach (function (d) { columnFormats_[d] = columnFormat });
     return self;
   };
+  
+  /**
+   * set flatting options
+   * @param 
+   * @return self
+   */
+  self.setFlattener = function (options) {
+    flattenOptions_ = options;
+    return self;
+  };
+  
+  /**
+   * get flattening options
+   * @param 
+   * @return self
+   */
+  self.getFlattener = function (options) {
+    return flattenOptions_;
+  };
+  
   /**
    * applies  formats
    * @param {object} format eg .. {backgrounds:'string',fontColors:'string',wraps:boolean,fontWeights:'string'}
@@ -377,23 +422,36 @@ function Fiddler(sheet) {
    */
   self.setFormats = function (range, format) {
     // if there's anything to do
-    if(range.getNumColumns() && range.getNumRows()){
+    var atr = range.getNumRows();
+    var atc = range.getNumColumns();
+    if(atc && atr){
       // for every format mentioned
       Object.keys(format).forEach (function (f) {
-        // create an array the same shape as the range
-        var values = new Array (range.getNumRows()).slice().map (function () {
-          return new Array(range.getNumColumns()).slice().map (function () {
-            // filled with the required values
-            return format[f];
-          })
-        });
-       
         // check method exists and apply it
-        var method = 'set'+f.slice(0,1).toUpperCase()+f.slice(1);
+        var method = 'set'+f.slice(0,1).toUpperCase()+f.slice(1).replace (/s$/,"").replace(/ies$/,"y");
         if (typeof range[method] !== "function") throw 'unknown format ' + method;
-        range[method](values);
-     
+        range[method](format[f]);
       });
+    }
+    return self;
+  };
+  
+  /**
+  * applies  formats to a rangelist
+  * @param {object} format eg .. {backgrounds:'string',fontColors:'string',wraps:boolean,fontWeights:'string'}
+  * @param {Range}
+  * @return {range}
+  */
+  self.setRangelistFormat = function (rangeList, format) {
+    // if there's anything to do
+    if (rangeList) {
+      Object.keys(format).forEach (function (f) {
+        var method = 'set'+f.slice(0,1).toUpperCase()+f.slice(1);
+        // patch in case its plural 
+        method = method.replace (/s$/,"").replace(/ies$/,"y");
+        if (typeof rangeList[method] !== "function") throw 'unknown format ' + method;
+        rangeList[method](format[f]);
+      })
     }
     return self;
   };
@@ -407,7 +465,8 @@ function Fiddler(sheet) {
   self.applyHeaderFormat = function (range, format) {
     if (!self.getNumColumns()) return self;
     format = format || headerFormat_;
-    return self.setFormats (range.offset(0,0,1,self.getNumColumns()), headerFormat_); 
+    var rangeList = self.makeRangeList ([range.offset(0,0,1,self.getNumColumns())], {numberOfRows:1} , sheet_ );
+    return self.setRangelistFormat (rangeList, headerFormat_); 
   };
     
   /**
@@ -417,12 +476,15 @@ function Fiddler(sheet) {
    * @return self;
    */
   self.applyColumnFormats = function (range )  {
+    var foCollect = [];
+    
     if ( columnFormats_ ) {
       // we'll need this later
       var dr = range.getSheet().getDataRange();
+      var atr = dr.getNumRows();
       /// make space for the header
-      if (self.hasHeaders() && dr.getNumRows()) {
-        dr = dr.offset (1,0,dr.getNumRows()-1);
+      if (self.hasHeaders() && atr > 1) {
+        dr = dr.offset (1,0,atr-1);
       }
       if (Object.keys (columnFormats_).length === 0) {
         // this means clear format for entire thing
@@ -430,12 +492,11 @@ function Fiddler(sheet) {
       }
       else {
         // first clear the bottom part of the sheet with no data
-        if (dr.getNumRows() > self.getNumRows()) {
-          dr.offset ( self.getNumRows() - dr.getNumRows() , 0 , dr.getNumRows() - self.getNumRows()).clearFormat();
+        var atr = dr.getNumRows();
+        if (atr > self.getNumRows() && self.getNumRows()) {
+          dr.offset ( self.getNumRows() - atr , 0 , atr - self.getNumRows()).clearFormat();
         }
-        
-        // TODO optimize common formats on adjacent columns to single set
-        // for now  1 at a time.
+
         if (self.getNumRows() ) {
           Object.keys(columnFormats_)
           .forEach (function (d) {
@@ -450,7 +511,11 @@ function Fiddler(sheet) {
                 r.clearFormat();
               }
               else {
-                self.setFormats  (r, o);
+                //self.setFormats  (r, o);
+                foCollect.push ({
+                  format: o ,
+                  range: r
+                });
               }
             }
             else {
@@ -464,6 +529,48 @@ function Fiddler(sheet) {
     else {
       // there;'s no formatting to do
     }
+    // optimize the formatting
+    var foNew = foCollect.reduce (function (p,c) {
+      // index by the format being set
+      var sht = c.range.getSheet();
+      var sid = sht.getSheetId();
+      Object.keys(c.format)
+      .forEach (function (f) {
+        var key = f+"_"+c.format[f]+"_"+sid;
+        p[key] = p[key] || {
+          value:c.format[f],
+          format:f,
+          ranges:[],
+          sheet:sht
+        };
+        p[key].ranges.push (c.range);
+      })
+      return p;
+    } , {});
+    
+    // now make rangelists and apply formats 
+    Object.keys(foNew)
+    .forEach (function (d) {
+      var o = foNew[d];
+      // make the range list - they are all ont he same sheet
+      var sht = o.sheet;
+      var rangeList = sht.getRangeList (o.ranges.map(function (e) { return e.getA1Notation(); }));
+      // workout the method (could be pluralized)
+      var method = "set"+o.format.slice(0,1).toUpperCase()+o.format.slice(1).replace (/s$/,"").replace(/ies$/,"y");
+      var t = {};
+      t[o.format] = o.value;
+      if (!rangeList[method]) {
+        // fall back to individual ranges
+        rangeList.getRanges()
+        .forEach (function (e) {
+          self.setFormats (e , t);
+        });
+      }
+      else {
+        rangeList[method] (o.value);
+      }
+    });
+   
     return self;
     
   }
@@ -807,16 +914,24 @@ function Fiddler(sheet) {
     var range =(sheet || sheet_).getDataRange();
     if (!options.skipValues) range.clearContent();
 
+    // if we're flattening then we need to do some fiddling with the data
+    // TODO .. its a long story because of formatting 
+    // do it in next major version
+    
     // we only do something if there's anydata
     var r = self.getRange(range);
     var v = self.createValues();
-
+    
     // we need to clear any formatting outside the ranges that may have been deleted
     if (tidyFormats_ && !options.skipFormats) {
-      var rc = range.getNumColumns () > r.getNumColumns () && range.getNumRows() ? 
-        range.offset (0, r.getNumColumns () , range.getNumRows() , range.getNumColumns () - r.getNumColumns ()).getA1Notation() : "";
-      var rr = range.getNumRows () > r.getNumRows () && range.getNumColumns() ? 
-        range.offset (r.getNumRows () , 0,  range.getNumRows () - r.getNumRows ()).getA1Notation() : "";
+      var rtc = r.getNumColumns ();
+      var rtr = range.getNumRows();
+      var atc = range.getNumColumns();
+      var atr = range.getNumRows();
+      var rc = atc > rtc && atr ? 
+        range.offset (0, rtc , atr , atc - rtc).getA1Notation() : "";
+      var rr = atr > rtr && atc ? 
+        range.offset (rtr , 0,  atr - rtr).getA1Notation() : "";
       var rl = [];
       if (rc) rl.push (rc);
       if (rr) rl.push (rr);
@@ -854,6 +969,150 @@ function Fiddler(sheet) {
       skipValues: true
     });
   };
+  
+  /**
+   * get the header an index number
+   * @param {string} the header
+   * @return {number} the index
+   */
+  self.getHeaderIndex = function (header) {
+    return self.getHeaders().indexOf ( header );
+  };
+  
+  /**
+   * get the header by index number
+   * @param {number} the index number (-1) the last one, -2 2nd last etc
+   * @return {string} the header
+   */
+  self.getHeaderByIndex = function (index) {
+    var headers = self.getHeaders();
+    return index < 0 ? headers[headers.length+index] : headers[index];
+  };
+  
+  /**
+   * get the names of columns occurring between start and finish
+   * @param {string} [start=the first one] start column name (or the first one)
+   * @param {string} [finish=the last one] finish column name (or the last one)
+   * @return {[string]} the columns 
+   */
+  self.getHeadersBetween = function ( start , finish ) {
+    start = start || self.getHeaderByIndex(0);
+    finish = finish || self.getHeaderByIndex(-1);
+    startIndex = self.getHeaderIndex(start);
+    finishIndex = self.getHeaderIndex(finish);
+    if (startIndex === -1) throw 'column ' + start + ' not found';
+    if (finishIndex === -1) throw 'column ' + finish + ' not found';
+    var [s,f] = [startIndex, finishIndex].sort ();
+    var list = self.getHeaders().slice (s,f+1);
+    return startIndex > finishIndex ? list.reverse() : list;
+  }
+  /**
+   * get the rangelist for a group of columns
+   * @param {sheet} sheet 
+   * @param {[string]} [columnNames=*] default is all of them
+   * @param {object} [options={rowOffset:1,numberOfRows:1,columnOffset:1,numberOfColumns:1}]
+   * @return {RangeList}
+   */
+  self.getRangeList = function (columnNames,options,sheet) {
+    options = options || {};
+    sheet = sheet || sheet_;
+    if (!sheet) throw 'sheet must be provided to getRangeList';
+    var range =  self.getRange (sheet.getDataRange());
+    
+    // range will point at start point of data
+    var atr = range.getNumRows();
+    if ( self.hasHeaders() && atr > 1 ) range = range.offset (1,0,atr-1);
+
+
+    // default options are the whole datarange for each column
+    var defOptions = {rowOffset:0,numberOfRows:self.getNumRows(),columnOffset:0,numberOfColumns:1};
+    
+    // set defaults and check all is good
+    Object.keys(defOptions).forEach (function (d) {
+      if(typeof options[d] === typeof undefined) options[d] = defOptions[d];
+    });
+    Object.keys(options).forEach (function (d) {
+      if(typeof options[d] !== "number" || !defOptions.hasOwnProperty(d) || options[d] < 0 )throw 'invalid property/value option ' + d + options[d] + 'to getRangeList ';
+    });
+    
+    ///
+    
+    // get the columnnames and expand out as required
+    var columnRanges = patchColumnNames_(columnNames)
+    .map (function (d) {
+      return range.offset ( options.rowOffset , headerOb_[d] + options.columnOffset , options.numberOfRows || 2, options.numberOfColumns || 2).getA1Notation();
+    })
+    .map (function (d) {
+      // need to treat number of rows (B1:B) or num of columns (c1:1) being 0
+      if (options.numberOfRows && options.numberOfColumns) return d;
+      if (options.numberOfRows < 1 && options.numberOfColumns < 1) throw 'must be a range of some size for rangeList ' + JSON.stringify (options);
+      if (!options.numberOfRows) {
+        //B1:b10 becoms b1:b
+        return d.replace (/(\w+:)([^\d]+).*/,"$1$2");
+      }
+      if (!options.numberOfColumns) {
+        return d.replace (/(\w+:).+?([\d]+).*/,"$1$2");
+      }
+    });
+    
+    // this will cause getRanges not to break if there are no ranges
+    return columnRanges.length ? 
+      sheet.getRangeList (columnRanges) : {
+        getRanges: function () {
+          return [];
+        }
+      };
+      
+    };
+  /**
+  * @param {[Range]} ranges
+  * @return {RangeList}
+  */
+  self.makeRangeList = function (ranges,options, sheet) {
+    
+    options = options || {};
+    sheet = sheet || sheet_;
+    if (!sheet) throw 'sheet must be provided to getRangeList';
+    
+    // default options are the whole datarange for each column
+    var defOptions = {rowOffset:0,numberOfRows:self.getNumRows(),columnOffset:0,numberOfColumns:1};
+    
+    // set defaults and check all is good
+    Object.keys(defOptions).forEach (function (d) {
+      if(typeof options[d] === typeof undefined) options[d] = defOptions[d];
+    });
+    
+    Object.keys(options).forEach (function (d) {
+      if(typeof options[d] !== "number" || !defOptions.hasOwnProperty(d) || options[d] < 0 )throw 'invalid property/value option ' + d + options[d] + 'to makeRangeList ';
+    });
+    
+    var r = (ranges || [])
+    .map (function (d) {
+      return d.getA1Notation();
+    })
+    .map (function (d) {       // need to treat number of rows (B1:B) or num of columns (c1:1) being 0
+      if (options.numberOfRows && options.numberOfColumns) return d;
+      if (options.numberOfRows < 1 && options.numberOfColumns < 1) throw 'must be a range of some size for rangeList ' + JSON.stringify (options);
+      if (!options.numberOfRows) {
+        //B1:b10 becoms b1:b
+        return d.replace (/(\w+:)([^\d]+).*/,"$1$2");
+      }
+      if (!options.numberOfColumns) {
+        return d.replace (/(\w+:).+?([\d]+).*/,"$1$2");
+      }
+      
+    });
+    
+    // this will cause getRanges not to break if there are no ranges
+    return r.length ? 
+      sheet.getRangeList (r) : {
+        getRanges: function () {
+          return [];
+        }
+      };
+  };
+  
+  
   /**
   * get the range required to write the values starting at the given range
   * @param {Range} [range=null] the range
@@ -1224,6 +1483,13 @@ function Fiddler(sheet) {
     return makeValues_();
   };
   
+  /**
+   * delete all the rows
+   */
+  self.removeAllRows = function () {
+    dataOb_ = [];
+    return self;
+  };
   /**
   * make a map with column labels to index
   * if there are no headers it will use column label as property key
