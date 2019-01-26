@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 26 January 2019 17:24:52 GMT by GasGit
+This repo (gasGit) was automatically updated on 26 January 2019 17:38:28 GMT by GasGit
 
 For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
 ## Details for Apps Script project gasGit
