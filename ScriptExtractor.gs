@@ -410,7 +410,7 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
       
       // get the project content
       var content = scriptApi_.getContent (d.id);
-      if ( content.error) throw project.error;
+      if ( content.error) throw content.error;
       
       // make info package
       var info = {
