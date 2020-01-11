@@ -3,6 +3,9 @@ function triggerBatch(){
   doExtraction();
   doLibraries();
   doGit();
+  
+  // if you want a summary sheet - this with your own sheet ID etc.
+  doSheet();
 }
 
 /**
@@ -39,7 +42,7 @@ function doExtraction () {
   
   // this does all the work - extracts all the sources and returns their infos
   var infos = extractor.getInfosAndExtract (scripts);
-
+  
   sumLog(infos);
 }
 
@@ -70,7 +73,6 @@ function getExtractor () {
 /* just to a summary of what happened
  */
 function sumLog(infos) {
-
   
   // summarize
   Logger.log('These projected were extracted on ' + new Date().toLocaleString() + 
@@ -93,6 +95,51 @@ function sumLog(infos) {
 
 }
 
+// run last
+function doSheet () {
+  // this is the extractor handle
+  var extractor = getExtractor();
+
+  
+  // get all the info files
+  var result  = extractor.getAllTheInfos();
+  if (!result.success) {
+    throw 'failed to get all the infos ' + JSON.stringify(result);
+  }
+  var infos = result.data.content;
+  writeSummarySpreadsheet ({
+    infos: infos,
+    id: '1DlKpVVYCrCPNfRbGsz6N_K3oPTgdC9gQIKi0aNb42uI',
+    name: 'list',
+    gitRoot: 'https://github.com/brucemcpherson/'
+  })
+}
+
+function writeSummarySpreadsheet(options) {
+  if(!options) return;
+  const id = options.id;
+  const name = options.name;
+  const infos = options.infos;
+  const gitRoot = options.gitRoot;
+  if(!id || !name || !infos || !gitRoot) {
+    throw 'missing options from summary sheet'
+  }
+  const fiddler = new cUseful.Fiddler(SpreadsheetApp.openById(id).getSheetByName(name));
+  fiddler.setData(infos.map(function(f) {
+    return {
+      name: f.title,
+      id: f.id,
+      created: new Date(f.createdDate),
+      modified: new Date(f.modifiedDate),
+      noticed: new Date(f.noticed),
+      github: gitRoot + f.title,
+      modules: f.modules.map(function(g) {
+        return g.name;
+      }).join(',')
+    };
+  })).dumpValues();
+  
+}
 
 
 
