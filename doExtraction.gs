@@ -112,7 +112,8 @@ function doSheet () {
     id: '1DlKpVVYCrCPNfRbGsz6N_K3oPTgdC9gQIKi0aNb42uI',
     name: 'list',
     gitRoot: 'https://github.com/brucemcpherson/',
-    searchRoot: 'http://ramblings.mcpher.com/system/app/pages/search?scope=search-site&q='
+    searchRoot: 'http://ramblings.mcpher.com/system/app/pages/search?scope=search-site&q=',
+    ideRoot: 'https://script.google.com/a/mcpher.com/d/'
   })
 }
 
@@ -123,6 +124,7 @@ function writeSummarySpreadsheet(options) {
   const infos = options.infos;
   const gitRoot = options.gitRoot;
   const searchRoot = options.searchRoot;
+  const ideRoot =  options.ideRoot;
   if(!id || !name || !infos || !gitRoot) {
     throw 'missing options from summary sheet'
   }
@@ -135,6 +137,7 @@ function writeSummarySpreadsheet(options) {
       modified: new Date(f.modifiedDate),
       noticed: new Date(f.noticed),
       github: gitRoot + f.title,
+      ideLink: ideRoot ?  ideRoot + f.id + '/edit?usp=drive_web' : '',
       modules: f.modules.map(function(g) {
         return g.name;
       }).join(','),
