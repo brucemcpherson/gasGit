@@ -40,7 +40,8 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
   var scriptApi_ = scriptApi;
   
   // this is the drive object to use. access token should be already set up
-  dapi_ = dapi;
+  var dapi_ = dapi;
+  var searchPath_;
   
   // error 500/403 occurs occassionally...
   dapi_.setLookAhead( function(response,attempt) {
@@ -51,7 +52,7 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
   self.setSearch = function (searchPath) {
     searchPath_ = searchPath;
   };
-  extractPath_ = extractPath;
+  var extractPath_ = extractPath;
 
   
   /**
