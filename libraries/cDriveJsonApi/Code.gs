@@ -11,7 +11,6 @@ function getLibraryInfo () {
       share:'https://script.google.com/d/1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx/edit?usp=sharing'
     },
     dependencies:[
-      cUseful.getLibraryInfo(),
       cUrlResult.getLibraryInfo()
     ]
   }; 
@@ -175,7 +174,7 @@ function DriveJsonApi () {
   * @return {string} the api base url
   */
   self.apiBase = function (optMod) {
-    op = optMod ? optMod + "/" : "";
+    const op = optMod ? optMod + "/" : "";
     return "https://www.googleapis.com/" + op + "drive/v2/files";
   };
 
@@ -199,7 +198,7 @@ function DriveJsonApi () {
       
       // need at least items(id)
 
-      fields="items(id)";
+      var fields="items(id)";
       var r = recurse (parentId, []);
       
       // hack result a bit to return consolidated items
