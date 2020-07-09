@@ -61,8 +61,14 @@ function GasGit (extractor) {
       self.accessToken, self.contentOptions());
     
     // do the base64 connversion
-    if (result.success & result.data) {
-        result.content = cUseful.b64ToString (result.content);
+    if (result.success && result.data) {
+      Logger.log('b64 start')
+      Logger.log(JSON.stringify(result.data));
+       Logger.log('b64 end')
+        result.content = cUseful.b64ToString (result.data.content);
+      // this is messed up between apps script versions.
+      
+        
     }
     
     return result;
