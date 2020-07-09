@@ -59,14 +59,12 @@ function getExtractor () {
       store:CacheService.getUserCache()
     })
   })
-  .enableCaching(true);
-  
-  return new ScriptExtractor(
-    new cDriveJsonApi.DriveJsonApi()
-    .setAccessToken(ScriptApp.getOAuthToken()), 
-    SETTINGS.EXTRACT.TO,
-    scriptApi
-  );
+  .setCaching(true);
+
+  const dj = new cDriveJsonApi.DriveJsonApi().setAccessToken(ScriptApp.getOAuthToken());
+  const se =  new ScriptExtractor(dj, SETTINGS.EXTRACT.TO,scriptApi) ;
+
+  return se;
 }
 
 
