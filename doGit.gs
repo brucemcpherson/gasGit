@@ -163,7 +163,7 @@ function doGit() {
   function findInfo (lib,infs) {
      var f;
      
-     for (p=0 ; p < infs.length && !f ; p++) {
+     for (var p=0 ; p < infs.length && !f ; p++) {
         if(lib.library === infs[p].title) {
           f = infs[p];
         }
@@ -173,7 +173,7 @@ function doGit() {
   function findRepo (inf,rs) {
      var f;
      
-     for (p=0 ; p < rs.length && !f ; p++) {
+     for (var p=0 ; p < rs.length && !f ; p++) {
         if(inf.repo === rs[p].name) {
           f = rs[p];
         }
