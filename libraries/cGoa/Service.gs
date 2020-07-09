@@ -1,14 +1,14 @@
 /**
- * this is the list of known Service and their url package
+ * this is the list of known Service and their url pockage
  * contact me to add to this list permamently so others can have them too.
  */
 var Service = (function (service) {
   "use strict";
 
   /**
-  * this list can be added to temporarily by using Service.package.yourprovider = { your url package }
+  * this list can be added to temporarily by using Service.pockage.yourprovider = { your url pockage }
   */
-  service.package = {
+  service.pockage = {
     "google_service": {
       authUrl : "https://www.googleapis.com/oauth2/v3/token",
       tokenUrl: "https://www.googleapis.com/oauth2/v3/token",
@@ -23,9 +23,9 @@ var Service = (function (service) {
       checkUrl: "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token="
     },
     "linkedin": {
-      authUrl : "https://www.linkedin.com/uas/oauth2/authorization",
-      tokenUrl: "https://www.linkedin.com/uas/oauth2/accessToken",
-      refreshUrl: "https://www.linkedin.com/uas/oauth2/authorization" 
+      authUrl : "https://www.linkedin.com/oauth/v2/authorization",
+      tokenUrl: "https://www.linkedin.com/oauth/v2/accessToken",
+      refreshUrl: "https://www.linkedin.com/oauth/v2/accessToken" 
     },
     "soundcloud": {
       authUrl : "https://soundcloud.com/connect",
