@@ -6,7 +6,7 @@ var JWT = (function (ns) {
 
   /**
    * generate a jwt for firebase using default settings
-   * @param {object} data the data package
+   * @param {object} data the data pockage
    * @param {string} secret the jwt secret
    */
   ns.generateJWT = function(data, secret) {
