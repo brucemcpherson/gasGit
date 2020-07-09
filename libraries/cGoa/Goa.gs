@@ -1,7 +1,7 @@
 /**
 * create a goa class
 * @constructor
-* @param {string} packageName the package name
+* @param {string} packageName the pockage name
 * @param {PropertyStore} propertyStore the property store
 * @param {number} [optTimeout] in seconds
 * @param {string} [impersonate] email address to impersonate for service accounts
@@ -64,13 +64,13 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     // the name 
     name_ = GoaApp.getName(params_);
     
-    // load in the package on initialization
+    // load in the pockage on initialization
     package_ = GoaApp.getPackage (propertyStore_ , packageName_);  
-    if (!package_) throw 'cannot find package ' + packageName_ + ' in given property store';
+    if (!package_) throw 'cannot find pockage ' + packageName_ + ' in given property store';
     
-    // check we have parameters matching the package 
+    // check we have parameters matching the pockage 
     if (name_ && name_ !== package_.packageName) throw 'the param name ' + name_ + 
-      ' is different than the package name ' + package_.packageName; 
+      ' is different than the pockage name ' + package_.packageName; 
     
     // make sure we dont get into a loop with expiry being less than grace period
     timeout_ = Math.floor(Math.max (GoaApp.gracePeriod /1000 ,
@@ -97,10 +97,11 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     // apparently we don't have one, so need to enter a consent flow
     // this is able to figure out which function is managing the goa flow
     if(!callback_) {
-      self.setCallback (cUseful.whereAmI(2).caller);
+      // using whereAMI no longer works - so just defaulting to doGet
+      self.setCallback ('doGet');
     }
 
-
+   
     // if this is the first time in, we need to signal a consent screen is needed
     if (phase_ === "init") {
         
@@ -108,19 +109,22 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
       id_ = cUseful.generateUniqueString();
       GoaApp.cachePut ( id_ , package_.packageName , params_, onToken_);
       var offline = cUseful.applyDefault(package_.offline, true);
+      var apack = {
+        callback : callback_,
+        timeout: timeout_,
+        offline:offline,
+        force: true
+      };
+      var bpack =  {
+        goaid:id_,
+        goaphase:'fetch',
+        goaname:package_.packageName
+      };
+
       
       // set up the consent screen
       needsConsent_ = (consentScreen_ || GoaApp.defaultConsentScreen) ( GoaApp.createAuthenticationUri ( 
-        package_, {
-          callback : callback_,
-          timeout: timeout_,
-          offline:offline,
-          force: true
-        }, {
-          goaid:id_,
-          goaphase:'fetch',
-          goaname:package_.packageName
-        }) ,GoaApp.createRedirectUri(), package_.packageName, package_.service, offline, uiOpts_);
+        package_, apack, bpack) ,GoaApp.createRedirectUri(), package_.packageName, package_.service, offline, uiOpts_);
 
       return self;
     }
@@ -302,15 +306,15 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     return GoaApp.getProperty (package_ , key);
   };
   /**
-   * get package
-   * @return {object | undefined} the package
+   * get pockage
+   * @return {object | undefined} the pockage
    */
   self.getPackage = function () {
     return package_ ;
   };
   
   /**
-   * write the package
+   * write the pockage
    * @return self
    */
   self.writePackage = function () {
@@ -320,7 +324,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
   };
   
   /**
-   * kill the package
+   * kill the pockage
    */
   self.kill = function () {
     GoaApp.killPackage(package_);
@@ -328,7 +332,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
   };
   
   /**
-   * remove the package
+   * remove the pockage
    */
   self.remove = function () {
     return GoaApp.removePackage ( propertyStore_, package_.packageName  );
@@ -343,3 +347,5 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
   return self;
 
 };
+
+ 
