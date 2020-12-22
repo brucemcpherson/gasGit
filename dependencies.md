@@ -1,7 +1,13 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 17/12/2020, 09:42:11 by GasGit
+This repo (gasGit) was automatically updated on 12/22/2020, 4:58:02 PM by GasGit
 
-For more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or [contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")
+For more information on gasgit, see the [desktop liberation site](https://ramblings.mcpher.com/drive-sdk-and-github/migrategasgit/ "desktop liberation")
+
+For more info on gasGit try https://ramblings.mcpher.com/?s=gasGit or use the issues section of this repo to contact me
+## Library reference
+1TphrUjRcx5sGlhgkfjB2R9MOZe3cPF7wK1LV8yVNoFCAwRTeNyXVsDFd
+
+
 ## Details for Apps Script project gasGit
 Where possible directly referenced or sub referenced library sources have been copied to this repository, or you can include the library references shown. 
 The shared link for [gasGit is here](https://script.google.com/d/1TphrUjRcx5sGlhgkfjB2R9MOZe3cPF7wK1LV8yVNoFCAwRTeNyXVsDFd/edit?usp=sharing "open in the GAS IDE")
