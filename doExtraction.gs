@@ -110,7 +110,7 @@ function doSheet () {
     id: '1DlKpVVYCrCPNfRbGsz6N_K3oPTgdC9gQIKi0aNb42uI',
     name: 'list',
     gitRoot: 'https://github.com/brucemcpherson/',
-    searchRoot: 'http://ramblings.mcpher.com/system/app/pages/search?scope=search-site&q=',
+    searchRoot: 'https://ramblings.mcpher.com/?s=',
     ideRoot: 'https://script.google.com/a/mcpher.com/d/'
   })
 }
