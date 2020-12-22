@@ -113,6 +113,15 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
 
   };
   
+  const getSiteInfo = (content) => {
+    return 'For more information on gasgit, see the [desktop liberation site]' + 
+    '(https://ramblings.mcpher.com/drive-sdk-and-github/migrategasgit/ "desktop liberation")\n\n' +
+    'For more info on ' + content.title + ' try ' +
+    'https://ramblings.mcpher.com/?s=' + content.title + ' or use the issues section of this repo to contact me'
+  }
+  const getLinkInfo = (content) => {
+    return '## Library reference\n' + content.id
+  }
   /** 
   * @param {object} content make a readme file
   * @return {string} marked up readme
@@ -120,11 +129,12 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
   self.makeReadme = function (content) {
     return "# Google Apps Script Project: " + content.title + "\n" +
     "This repo (" + content.repo + ") was automatically created on " + new Date().toLocaleString() + " by GasGit\n" +
-    'for more information see the [desktop liberation site](http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation")\n' +
     'you can see [library and dependency information here](' + ENUMS.FILES.DEPENDENCIES +')\n\n' +
+    getSiteInfo (content) + '\n' + getLinkInfo(content) + '\n\n' +
     "Now update manually with details of this project - this skeleton file is committed only when there is no README.md in the repo.";
   };
 
+    
   /** 
   * @param {object} content make a dependency readme file
   * @return {string} marked up dependency readme
@@ -132,9 +142,7 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
   self.makeDepenciesMd = function (content) {
     return "# Google Apps Script Project: " + content.title + "\n" +
     "This repo (" + content.repo + ") was automatically updated on " + new Date().toLocaleString() + " by GasGit\n\n" +
-    'For more information see the [desktop liberation site]' + 
-    '(http://ramblings.mcpher.com/Home/excelquirks/drivesdk/gettinggithubready "desktop liberation") or ' +
-    '[contact me on G+](https://plus.google.com/+BruceMcpherson "Bruce McPherson - GDE")' +
+    getSiteInfo (content) + '\n' + getLinkInfo(content) + '\n\n' +
     "\n## Details for Apps Script project " + content.title +
     "\nWhere possible directly referenced or sub referenced library sources have been copied to this repository" +
     ", or you can include the library references shown. " +
