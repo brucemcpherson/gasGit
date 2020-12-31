@@ -284,7 +284,7 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
   
   /**
    * @param {string}  id of the  file
-   * @param {string} folderTitle project title for error message
+   * @param {string} folderTitle project title for error message 
    * @param {string} fileName
    * @return {object} regular result object
    */
