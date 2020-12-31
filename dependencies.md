@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 12/22/2020, 4:58:02 PM by GasGit
+This repo (gasGit) was automatically updated on 12/31/2020, 11:40:48 AM by GasGit
 
 For more information on gasgit, see the [desktop liberation site](https://ramblings.mcpher.com/drive-sdk-and-github/migrategasgit/ "desktop liberation")
 
@@ -26,6 +26,7 @@ doLibraries| server_js
 doGit| server_js
 wrapper| server_js
 goa| server_js
+rottle| server_js
 ### Directly referenced libraries
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
