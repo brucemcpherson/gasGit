@@ -1,15 +1,18 @@
 {
   "timeZone": "Europe/London",
+  "exceptionLogging": "STACKDRIVER",
   "dependencies": {
-    "libraries": [{
-      "userSymbol": "cCacheHandler",
-      "libraryId": "1U6j9t_3ONTbhTCvhjwANMcEXeHXr4shgzTG0ZrRnDYLcFl3_IH2b2eAY",
-      "version": "18"
-    }, {
-      "userSymbol": "cUseful",
-      "libraryId": "1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex",
-      "version": "117"
-    }]
-  },
-  "exceptionLogging": "STACKDRIVER"
+    "libraries": [
+      {
+        "userSymbol": "cCacheHandler",
+        "libraryId": "1U6j9t_3ONTbhTCvhjwANMcEXeHXr4shgzTG0ZrRnDYLcFl3_IH2b2eAY",
+        "version": "18"
+      },
+      {
+        "userSymbol": "cUseful",
+        "libraryId": "1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex",
+        "version": "127"
+      }
+    ]
+  }
 }
