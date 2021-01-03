@@ -411,9 +411,9 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
    */
   self.getInfosAndExtract = function (scripts) {
     const rot = bmRottler.newRottler({
-      rate: 20,
+      rate: 30,
       period: 1000*60,
-      delay: 2000,
+      delay: 1000,
       synch: true,
       sleep: (ms)=>{
         console.log('sleeping for', ms)
@@ -427,9 +427,9 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
       var projData = project.data[0];
       
       // get the project content
-console.log(rot.waitTime())
+      console.log(rot.waitTime())
       rot.rottle()
- console.log(rot.waitTime())     
+   
       var content = scriptApi_.getContent (d.id);
       if ( content.error) throw content.error;
       
