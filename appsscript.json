@@ -1,48 +1,38 @@
 {
   "timeZone": "Europe/London",
   "dependencies": {
-    "enabledAdvancedServices": [
-      {
-        "userSymbol": "Drive",
-        "serviceId": "drive",
-        "version": "v2"
-      }
-    ],
-    "libraries": [
-      {
-        "userSymbol": "cGoa",
-        "libraryId": "1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2",
-        "version": "34"
-      },
-      {
-        "userSymbol": "cUrlResult",
-        "libraryId": "1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM",
-        "version": "19"
-      },
-      {
-        "userSymbol": "cDriveJsonApi",
-        "libraryId": "1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx",
-        "version": "15",
-        "developmentMode": true
-      },
-      {
-        "userSymbol": "cUseful",
-        "libraryId": "1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex",
-        "version": "120",
-        "developmentMode": true
-      },
-      {
-        "userSymbol": "cScriptApi",
-        "libraryId": "1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o",
-        "version": "2"
-      },
-      {
-        "userSymbol": "bmRottler",
-        "version": "4",
-        "libraryId": "1dajqLysdKo8IoqddtEaGhtUUlSbtSQ1Agi2K5cXSUm0DxXfLYouSO9yD",
-        "developmentMode": false
-      }
-    ]
+    "enabledAdvancedServices": [{
+      "userSymbol": "Drive",
+      "serviceId": "drive",
+      "version": "v2"
+    }],
+    "libraries": [{
+      "userSymbol": "cScriptApi",
+      "libraryId": "1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o",
+      "version": "2"
+    }, {
+      "userSymbol": "bmRottler",
+      "libraryId": "1dajqLysdKo8IoqddtEaGhtUUlSbtSQ1Agi2K5cXSUm0DxXfLYouSO9yD",
+      "version": "6"
+    }, {
+      "userSymbol": "cUrlResult",
+      "libraryId": "1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM",
+      "version": "20"
+    }, {
+      "userSymbol": "cUseful",
+      "libraryId": "1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex",
+      "version": "129",
+      "developmentMode": true
+    }, {
+      "userSymbol": "cGoa",
+      "libraryId": "1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2",
+      "version": "36"
+    }, {
+      "userSymbol": "cDriveJsonApi",
+      "libraryId": "1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx",
+      "version": "16",
+      "developmentMode": true
+    }]
   },
   "webapp": {
     "access": "MYSELF",
