@@ -29,8 +29,7 @@
       {
         "userSymbol": "cUseful",
         "libraryId": "1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex",
-        "version": "129",
-        "developmentMode": true
+        "version": "129"
       },
       {
         "userSymbol": "cGoa",
@@ -40,8 +39,7 @@
       {
         "userSymbol": "cDriveJsonApi",
         "libraryId": "1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx",
-        "version": "16",
-        "developmentMode": true
+        "version": "16"
       }
     ]
   },
