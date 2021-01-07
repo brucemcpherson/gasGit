@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 1/3/2021, 6:03:04 PM by GasGit
+This repo (gasGit) was automatically updated on 1/7/2021, 12:26:33 PM by GasGit
 
 For more information on gasgit, see the [desktop liberation site](https://ramblings.mcpher.com/drive-sdk-and-github/migrategasgit/ "desktop liberation")
 
@@ -31,7 +31,7 @@ rottle| server_js
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
 cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|2|no|[here](libraries/cScriptApi "library source")
-bmRottler| bmRottler|1dajqLysdKo8IoqddtEaGhtUUlSbtSQ1Agi2K5cXSUm0DxXfLYouSO9yD|6|no|[here](libraries/bmRottler "library source")
+bmRottler| bmRottler|1dajqLysdKo8IoqddtEaGhtUUlSbtSQ1Agi2K5cXSUm0DxXfLYouSO9yD|8|no|[here](libraries/bmRottler "library source")
 cUrlResult| cUrlResult|1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM|20|no|[here](libraries/cUrlResult "library source")
 cUseful| cUseful|1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex|129|no|[here](libraries/cUseful "library source")
 cGoa| cGoa|1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2|36|no|[here](libraries/cGoa "library source")
@@ -41,7 +41,7 @@ cDriveJsonApi| cDriveJsonApi|1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5N
 --- | --- | --- | --- | --- | --- 
 cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|2|no|[here](libraries/cScriptApi "library source")
 cUseful| cUseful|1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex|117|no|[here](libraries/cUseful "library source")
-bmRottler| bmRottler|1dajqLysdKo8IoqddtEaGhtUUlSbtSQ1Agi2K5cXSUm0DxXfLYouSO9yD|6|no|[here](libraries/bmRottler "library source")
+bmRottler| bmRottler|1dajqLysdKo8IoqddtEaGhtUUlSbtSQ1Agi2K5cXSUm0DxXfLYouSO9yD|8|no|[here](libraries/bmRottler "library source")
 cUrlResult| cUrlResult|1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM|20|no|[here](libraries/cUrlResult "library source")
 cCacheHandler| cCacheHandler|1U6j9t_3ONTbhTCvhjwANMcEXeHXr4shgzTG0ZrRnDYLcFl3_IH2b2eAY|18|no|[here](libraries/cCacheHandler "library source")
 cGoa| cGoa|1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2|36|no|[here](libraries/cGoa "library source")
