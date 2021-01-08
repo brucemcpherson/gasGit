@@ -299,6 +299,7 @@ class Rottler {
 
     // how long since the last thing happened
     const passed = this.sinceLast();
+    
     // how long since the first time happened
     const passedSinceFirst = this.sinceFirst();
 
@@ -316,6 +317,9 @@ class Rottler {
     // essentially a smooth is a modified delay
     const waitsLeft = available - 1;
     const left = waitsLeft / this.rate;
+    console.log({
+      passed,passedSinceFirst,nextPeriodWait,available,rateWait,delay,waitsLeft,left
+    })
     if (
       this.smooth &&
       !rateWait &&
@@ -332,7 +336,7 @@ class Rottler {
     
     // the waitime applies to the delay - how long since the last thing happened
     // or it could be that we have to wait till the measurement period expires
-    const waitTime = Math.max( rateWait , delay)
+    const waitTime = Math.max( rateWait , delay, 0)
     return waitTime;
   }
 
@@ -443,6 +447,7 @@ class Rottler {
     this._events[name].listener = null;
   }
 }
+
 
 
 // because libraries dont really support calsses yet
