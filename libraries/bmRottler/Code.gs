@@ -317,9 +317,11 @@ class Rottler {
     // essentially a smooth is a modified delay
     const waitsLeft = available - 1;
     const left = waitsLeft / this.rate;
+    /*
     console.log({
       passed,passedSinceFirst,nextPeriodWait,available,rateWait,delay,waitsLeft,left
     })
+    */
     if (
       this.smooth &&
       !rateWait &&
