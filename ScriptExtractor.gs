@@ -411,9 +411,9 @@ function ScriptExtractor(dapi,  extractPath, scriptApi) {
    */
   self.getInfosAndExtract = function (scripts) {
     const rot = bmRottler.newRottler({
-      rate:60,
+      rate:30,
       period: 1000*60,
-      delay: 100,
+      delay: 400,
       synch: true,
       sleep: (ms)=>{
         console.log('sleeping for', ms)
