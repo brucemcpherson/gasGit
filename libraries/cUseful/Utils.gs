@@ -186,7 +186,7 @@ var Utils = (function (ns) {
   **/
   ns.generateUniqueString = function (optAbcLength) {
     var abcLength = ns.isUndefined(optAbcLength) ? 3 : optAbcLength;
-    return  (new Date().getTime()).toString(36)  + arbitraryString(abcLength) ;
+    return  (new Date().getTime()).toString(36)  + ns.arbitraryString(abcLength) ;
   };
   
   /** 
@@ -705,11 +705,7 @@ var Utils = (function (ns) {
 
   ns.byte2hex = function(data) {
 
-    /*
-    syntax not liked by v8
-    conv = [(i < 0 ? i + 256 : i).toString(16) for each (i in data)];
-    return [i.length == 1 ? "0" + i : i for each (i in conv)];
-    */
+
     var conv = data.map(function(f) { 
       return (f < 0 ? f + 256 : f).toString(16)
     })
