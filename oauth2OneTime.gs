@@ -14,8 +14,8 @@ function oneTimeSetProperties () {
   var propertyStore = PropertiesService.getScriptProperties();
 
   cGoa.GoaApp.setPackage (propertyStore , { 
-    clientId : "xx8a5b0c",
-    clientSecret : "xx6e3",
+    clientId : "xxx5b0c",
+    clientSecret : "xxxbd0a0",
     scopes : [
       'gist',
       'repo'
