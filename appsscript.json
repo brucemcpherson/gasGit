@@ -1,5 +1,7 @@
 {
   "timeZone": "Europe/London",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
   "dependencies": {
     "enabledAdvancedServices": [
       {
@@ -12,12 +14,12 @@
       {
         "userSymbol": "cGoa",
         "libraryId": "1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2",
-        "version": "36"
+        "version": "37"
       },
       {
         "userSymbol": "cUseful",
         "libraryId": "1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex",
-        "version": "129"
+        "version": "131"
       },
       {
         "userSymbol": "cDriveJsonApi",
@@ -43,15 +45,13 @@
     ]
   },
   "webapp": {
-    "access": "MYSELF",
-    "executeAs": "USER_DEPLOYING"
+    "executeAs": "USER_DEPLOYING",
+    "access": "MYSELF"
   },
-  "exceptionLogging": "STACKDRIVER",
   "oauthScopes": [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/script.external_request",
     "https://www.googleapis.com/auth/script.projects",
     "https://www.googleapis.com/auth/drive"
-  ],
-  "runtimeVersion": "V8"
+  ]
 }
