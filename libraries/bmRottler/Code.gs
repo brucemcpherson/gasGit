@@ -54,7 +54,7 @@ class Rottler {
    * @param {number} [options.delay = 10] minimum delay in ms between each call
    * @param {function} [options.timeout] the setTimeout function (usuall setTimeout is the default)
    * @param {boolean} [options.throwError = true] whether to throw an error on rate limit problem
-   * @param {boolean} [options.synch = false] synch or asynch rottle
+   * @param {boolean} [options.synch = true] synch or asynch rottle
    * @param {function} [options.sleep] a synch sleeping function (apps script - Utilities.sleep)
    * @param {boolean} [options.smooth = false] whether to smooth delay over a rate
    * @param {number} [options.smoothMinimum = 0.25] threshold for smoothing to kick in
@@ -66,8 +66,8 @@ class Rottler {
     delay = 10,
     timeout,
     throwError = true,
-    synch = false,
-    sleep,
+    synch = true,
+    sleep = Utilities.sleep,
     smooth = false,
     smoothMinimum = 0.25,
   } = {}) {
@@ -95,6 +95,7 @@ class Rottler {
     if (this.synch && !sleep) {
       throw new Error("synch option needs a synch sleep function");
     }
+ 
     if (!this.synch) {
       this.setTimeout = timeout;
       if (!timeout && typeof setTimeout !== "undefined")
