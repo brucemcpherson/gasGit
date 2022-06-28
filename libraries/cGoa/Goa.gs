@@ -7,24 +7,23 @@
 * @param {string} [impersonate] email address to impersonate for service accounts
 */
 var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
-  'use strict';
 
-  var propertyStore_ = propertyStore, 
-      packageName_ = packageName , 
+  var _propertyStore = propertyStore, 
+      package_name = packageName , 
       self = this , 
-      phase_, 
-      id_ , 
-      params_ , 
-      callback_, 
-      package_, 
-      needsConsent_, 
-      timeout_ = optTimeout, 
-      impersonate_ = impersonate,
-      consentScreen_,
-      name_,
-      onToken_,
-      onTokenResult_,
-      uiOpts_;
+      _phase, 
+      _id , 
+      _params , 
+      _callback, 
+      _package, 
+      _needsConsent, 
+      _timeout = optTimeout, 
+      _impersonate = impersonate,
+      _consentScreen,
+      _name,
+      _onToken,
+      _onTokenResult,
+      _uiOpts;
      
 
 
@@ -35,7 +34,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
   */
   self.setOnToken = function (onTokenFunction) {
     if (typeof onTokenFunction !== 'function') throw 'ontoken callback must be a function'; 
-    onToken_ = onTokenFunction;
+    _onToken = onTokenFunction;
     return self;
   };
   
@@ -44,7 +43,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * @param {object} opts
    */
   self.setUiBehavior = function (opts) {
-    uiOpts_ = opts;
+    _uiOpts = opts;
     return self;
   };
   /**
@@ -55,26 +54,26 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
   self.execute  = function (params) {
     
     // store these for later
-    params_ = params;
+    _params = params;
 
     // the phase & id to execute is in the state token, if it exists
-    phase_ = GoaApp.getCustomParameter(params_).goaphase || 'init';
-    id_ = GoaApp.getCustomParameter(params_).goaid; 
+    _phase = GoaApp.getCustomParameter(_params).goaphase || 'init';
+    _id = GoaApp.getCustomParameter(_params).goaid; 
     
     // the name 
-    name_ = GoaApp.getName(params_);
+    _name = GoaApp.getName(_params);
     
     // load in the pockage on initialization
-    package_ = GoaApp.getPackage (propertyStore_ , packageName_);  
-    if (!package_) throw 'cannot find pockage ' + packageName_ + ' in given property store';
+    _package = GoaApp.getPackage (_propertyStore , package_name);  
+    if (!_package) throw 'cannot find pockage ' + package_name + ' in given property store';
     
     // check we have parameters matching the pockage 
-    if (name_ && name_ !== package_.packageName) throw 'the param name ' + name_ + 
-      ' is different than the pockage name ' + package_.packageName; 
+    if (_name && _name !== _package.packageName) throw 'the param name ' + _name + 
+      ' is different than the pockage name ' + _package.packageName; 
     
     // make sure we dont get into a loop with expiry being less than grace period
-    timeout_ = Math.floor(Math.max (GoaApp.gracePeriod /1000 ,
-        cUseful.applyDefault(timeout_, GoaApp.getServicePackage(package_).defaultDuration || 0)));
+    _timeout = Math.floor(Math.max (GoaApp.gracePeriod /1000 ,
+        Utils.applyDefault(_timeout, GoaApp.getServicePackage(_package).defaultDuration || 0)));
      
 
     // if we have a token our work is done
@@ -83,56 +82,58 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     }
     
     // try to get one.
-    GoaApp.start (package_, undefined, impersonate_, timeout_ );
+    GoaApp.start (_package, undefined, _impersonate, _timeout );
     
-    if (GoaApp.hasToken(package_)) {
+    if (GoaApp.hasToken(_package)) {
       self.writePackage();
       
       // if there's a call back then do it.
-      execOnToken_();
+      exec_onToken();
       
       return self;
     }
     
     // apparently we don't have one, so need to enter a consent flow
     // this is able to figure out which function is managing the goa flow
-    if(!callback_) {
+    if(!_callback) {
       // using whereAMI no longer works - so just defaulting to doGet
       self.setCallback ('doGet');
     }
 
    
     // if this is the first time in, we need to signal a consent screen is needed
-    if (phase_ === "init") {
+    if (_phase === "init") {
         
     // need to store these for later
-      id_ = cUseful.generateUniqueString();
-      GoaApp.cachePut ( id_ , package_.packageName , params_, onToken_);
-      var offline = cUseful.applyDefault(package_.offline, true);
+      _id = Utils.generateUniqueString();
+      self.writePackage();
+
+      GoaApp.cachePut ( _id , _package.packageName , _params, _onToken);
+      var offline = Utils.applyDefault(_package.offline, true);
       var apack = {
-        callback : callback_,
-        timeout: timeout_,
+        callback : _callback,
+        timeout: _timeout,
         offline:offline,
         force: true
       };
       var bpack =  {
-        goaid:id_,
+        goaid:_id,
         goaphase:'fetch',
-        goaname:package_.packageName
+        goaname:_package.packageName
       };
 
       
       // set up the consent screen
-      needsConsent_ = (consentScreen_ || GoaApp.defaultConsentScreen) ( GoaApp.createAuthenticationUri ( 
-        package_, apack, bpack) ,GoaApp.createRedirectUri(), package_.packageName, package_.service, offline, uiOpts_);
+      _needsConsent = (_consentScreen || GoaApp.defaultConsentScreen) ( GoaApp.createAuthenticationUrl ( 
+        _package, apack, bpack) ,GoaApp.createRedirectUri(), _package.packageName, _package.service, offline, _uiOpts);
 
       return self;
     }
     
     // if this is a fetch iteration then we've been called back by a consent requests
-    if (phase_ === "fetch") {
+    if (_phase === "fetch") {
       
-      var result = GoaApp.fetchAccessToken (package_ , params);
+      var result = GoaApp.fetchAccessToken (_package , params);
       if (!self.hasToken()) {
         throw 'Failed to get access token : operation was cancelled';
       }
@@ -141,18 +142,18 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
       self.writePackage ();
       
       // if there's a call back then do it.
-      execOnToken_();
+      exec_onToken();
       
       return self;
     }
 
-    throw 'unknown phase:' + phase_
+    throw 'unknown phase:' + _phase
   };
 
   function getCacheContents_() {
-    var p = GoaApp.cacheGet (id_);
-    if (!p) throw 'cached arguments not found for ' + package_.packageName;
-    if (p.name !== package_.packageName) throw 'cache mismatch for ' + p.name + ':should have been ' +  package_.packageName;
+    var p = GoaApp.cacheGet (_id);
+    if (!p) throw 'cached arguments not found for ' + _package.packageName;
+    if (p.name !== _package.packageName) throw 'cache mismatch for ' + p.name + ':should have been ' +  _package.packageName;
     return p;
   }
   /**
@@ -160,20 +161,20 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * @return {object} the parameters
    */
   self.getParams = function () {
-    return  phase_ === "init" ? params_ : getCacheContents_().args;
+    return  _phase === "init" ? _params : getCacheContents_().args;
   };
   
   /**
    * get ontoken callback
    * @return {object} the callback
    */
-  self.getOnToken = function () {
+  self.getOnToken =  () => {
    
-    if (phase_ !== "init") {
+    if (_phase !== "init") {
       var  o =  getCacheContents_().onToken; 
-      onToken_ = o ? eval(o)  : undefined;
+      _onToken = o ? eval(o)  : undefined;
     }
-    return onToken_;   // just return the function to be executed on completion
+    return _onToken;   // just return the function to be executed on completion
 
   };
   
@@ -183,7 +184,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * @return {object} the callback
    */
   self.getOnTokenResult = function () {
-    return  onTokenResult_;
+    return  _onTokenResult;
   };
   
   /**
@@ -191,14 +192,14 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * @return {HtmlOutput} the consent page
    */
   self.getConsent = function () {
-    return HtmlService.createHtmlOutput(needsConsent_);
+    return HtmlService.createHtmlOutput(_needsConsent);
   };
   
  
   self.done = function () {
     // set up close message or go away.
     return HtmlService.createHtmlOutput(
-      GoaApp.closeWindow(self.hasToken() ,uiOpts_ || {
+      GoaApp.closeWindow(self.hasToken() ,_uiOpts || {
         close:false,
       }));
   };
@@ -248,7 +249,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * @return {boolean} whether consent is needed
    */
   self.needsConsent = function () {
-    return needsConsent_ ? true : false ;
+    return _needsConsent ? true : false ;
   };
   
 
@@ -265,8 +266,8 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
     
     // make sure it is a function
     //if (typeof callbackFunction !== 'function' || !callbackFunction.name) throw 'callback must be a named function';    
-    //callback_ = callbackFunction;
-    callback_ = callback;
+    //_callback = callbackFunction;
+    _callback = callback;
     return self;
   };
  
@@ -277,7 +278,7 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
   * @return {Goa} self
   */
   self.setConsentScreen = function (consentCallback) {
-    consentScreen_ = consentCallback;
+    _consentScreen = consentCallback;
     return self;
   };
   /**
@@ -286,16 +287,29 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * @return {boolean} there is one or not
    */
   self.hasToken = function (check) {
-    return GoaApp.hasToken (package_,check);
+    return GoaApp.hasToken (_package,check);
   };
   
   /**
    * get token
-   * @return {string | undefined} the token
+   * @return {string | null} the token
    */
   self.getToken = function () {
-    return GoaApp.getToken (package_);
+    const token = GoaApp.getToken (_package);
+    if (token) return token
+
+    // we could try to refresh one
+    if (GoaApp.hasRefreshToken(_package)) {
+      GoaApp.tryRefresh(_package);
+      if (self.hasToken()) {
+        self.writePackage()
+      } 
+      return GoaApp.getToken (_package)
+    }
+    return null
   };
+  
+  self.getPropertyStore = () => _propertyStore
   
    /**
    * get property
@@ -303,31 +317,46 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * @return {string | undefined} the property value
    */
   self.getProperty = function (key) {
-    return GoaApp.getProperty (package_ , key);
+    return GoaApp.getProperty (_package , key);
   };
   /**
    * get pockage
    * @return {object | undefined} the pockage
    */
   self.getPackage = function () {
-    return package_ ;
+    return _package ;
   };
   
+  /**
+   * fetch pockage
+   * @return {object | null} the package
+   */
+  self.fetchPackage = () => {
+    return _package ? {..._package} : null
+  }
   /**
    * write the pockage
    * @return self
    */
   self.writePackage = function () {
-    package_.revised = new Date().getTime();
-    GoaApp.setPackage ( propertyStore_ , package_);
+    _package.revised = new Date().getTime();
+    GoaApp.setPackage ( _propertyStore , _package);
     return self;
   };
   
   /**
+   * update the package
+   */
+  self.updatePackage = (pockage) => {
+    _package = pockage
+    self.writePackage()
+    return self
+  }
+  /**
    * kill the pockage
    */
   self.kill = function () {
-    GoaApp.killPackage(package_);
+    GoaApp.killPackage(_package);
     return self.writePackage();
   };
   
@@ -335,13 +364,13 @@ var Goa = function (packageName, propertyStore, optTimeout , impersonate) {
    * remove the pockage
    */
   self.remove = function () {
-    return GoaApp.removePackage ( propertyStore_, package_.packageName  );
+    return GoaApp.removePackage ( _propertyStore, _package.packageName  );
   };
   
   
-  function execOnToken_() {
+  function exec_onToken() {
     var onToken = self.getOnToken();
-    onTokenResult_ = onToken ? onToken(self.getToken() , package_.packageName , self.getParams()) : undefined;
+    _onTokenResult = onToken ? onToken(self.getToken() , _package.packageName , self.getParams()) : undefined;
   }
 
   return self;
