@@ -91,14 +91,20 @@ var GoaApp = (function (goaApp) {
         // we got something
         if (result && result.content) {
           if (result.content.access_token) {
+            if (result.content.token_type && result.content.token_type !== 'bearer') {
+              throw 'Expected bearer token type but got ' + result.content.token_type
+            }
+            // some credential types don't expire
+            const TenYearsInSecs = 10 * 365 * 24 * 60 * 60
+            const expires = (result.content.expires_in || TenYearsInSecs) * 1000 + new Date().getTime()
             pockage.access = {
               accessToken: result.content.access_token,
-              expires: result.content.expires_in * 1000 + new Date().getTime()
+              expires
             }
           }
         }
         // something happened
-        if (!goaApp.hasToken(pockage)) throw 'failed to get service account token:' + JSON.stringify(result.content);
+        if (!goaApp.hasToken(pockage)) throw 'failed to get credential token:' + JSON.stringify(result.content);
       }
 
 
@@ -718,7 +724,8 @@ var GoaApp = (function (goaApp) {
   const addBasic = (servicePackage, pockage, options = {}) => {
     if (servicePackage.basic) {
       options.headers = options.headers || {};
-      options.headers.authorization = "Basic " + Utilities.base64Encode(pockage.clientId + ":" + pockage.clientSecret);
+      const b = Utilities.base64Encode
+      options.headers.authorization = "Basic " + b(pockage.clientId + ":" + pockage.clientSecret)
     }
     return options
   }
@@ -1003,20 +1010,23 @@ var GoaApp = (function (goaApp) {
       var options = setOptions_(pockage, servicePackage, {
         method: "POST",
         muteHttpExceptions: true,
-        contentType: 'application/x-www-form-urlencoded',
+        contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
         payload: {
           grant_type: "client_credentials"
-        },
-        headers: {
-          "Accept-Language": "en_US"
         }
       });
 
 
       // request a new one
       var result = UrlFetchApp.fetch(servicePackage.tokenUrl, options);
-      tokenPacket.content = JSON.parse(result.getContentText());
+
+      const t = result.getContentText();
       tokenPacket.status = result.getResponseCode();
+      try {
+        tokenPacket.content = JSON.parse(t);
+      } catch (err) {
+        throw `Failed to parse response to credential grant request \n${t}`
+      }
       return tokenPacket;
     }
   };
