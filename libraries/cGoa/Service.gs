@@ -23,6 +23,12 @@ var Service = (function (service) {
   * this list can be added to temporarily by using Service.pockage.yourprovider = { your url pockage }
   */
   service.pockage = {
+    // some of the twitter API use credentials only oauth
+    twitterAppOnly: {
+      tokenUrl: "https://api.twitter.com/oauth2/token",
+      basic: true,
+      accountType: "credential",
+    },
     twitter: {
       authUrl: "https://twitter.com/i/oauth2/authorize",
       tokenUrl: "https://api.twitter.com/2/oauth2/token",
