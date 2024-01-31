@@ -9,13 +9,14 @@
  * @return {void}
  */
 function oneTimeSetProperties () {
-
+    const clientId = '76xx0c'
+    const clientSecret = '04xxe'
    // used by all using this script
   var propertyStore = PropertiesService.getUserProperties();
 
   cGoa.GoaApp.setPackage (propertyStore , { 
-    clientId : "76xx0c",
-    clientSecret : "5xx44",
+    clientId,
+    clientSecret,
     scopes : [
       'gist',
       'repo'
