@@ -1,5 +1,5 @@
 # Google Apps Script Project: gasGit
-This repo (gasGit) was automatically updated on 1/31/2024, 1:24:09 PM by GasGit
+This repo (gasGit) was automatically updated on 4/29/2026, 10:03:51 AM by GasGit
 
 For more information on gasgit, see the [desktop liberation site](https://ramblings.mcpher.com/drive-sdk-and-github/migrategasgit/ "desktop liberation")
 
@@ -32,7 +32,7 @@ goa| server_js
 cGoa| cGoa|1v_l4xN3ICa0lAW315NQEzAHPSoNiFdWHsMEwj2qA5t9cgZ5VWci2Qxv2|45|no|[here](libraries/cGoa "library source")
 cUseful| cUseful|1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex|131|no|[here](libraries/cUseful "library source")
 cDriveJsonApi| cDriveJsonApi|1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx|16|no|[here](libraries/cDriveJsonApi "library source")
-cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|2|no|[here](libraries/cScriptApi "library source")
+cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|2|no|no
 cUrlResult| cUrlResult|1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM|20|no|[here](libraries/cUrlResult "library source")
 bmRottler| bmRottler|1dajqLysdKo8IoqddtEaGhtUUlSbtSQ1Agi2K5cXSUm0DxXfLYouSO9yD|10|no|[here](libraries/bmRottler "library source")
 ### All dependencies and sub dependencies
@@ -43,7 +43,7 @@ cUseful| cUseful|1EbLSESpiGkI3PYmJqWh3-rmLkYKAtCNPi1L2YCtMgo2Ut8xMThfJ41Ex|131|n
 cDriveJsonApi| cDriveJsonApi|1P0ZbhWVxXcYU8kJxtpdzm_tNuoBa34NLAubBUgEqsW7-pvEg5NVppTyx|16|no|[here](libraries/cDriveJsonApi "library source")
 cUrlResult| cUrlResult|1NtAiJulZM4DssyN0HcK2XXTnykN_Ir2ee2pXV-CT367nKbdbTvRX4pTM|20|no|[here](libraries/cUrlResult "library source")
 cCacheHandler| cCacheHandler|1U6j9t_3ONTbhTCvhjwANMcEXeHXr4shgzTG0ZrRnDYLcFl3_IH2b2eAY|18|no|[here](libraries/cCacheHandler "library source")
-cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|2|no|[here](libraries/cScriptApi "library source")
+cScriptApi| cScriptApi|1TvPB6nhP1WyXWpbZtsj4T5cqb_RXmzkLh01IqFeDCAhrDul-FlB_be7o|2|no|no
 bmRottler| bmRottler|1dajqLysdKo8IoqddtEaGhtUUlSbtSQ1Agi2K5cXSUm0DxXfLYouSO9yD|10|no|[here](libraries/bmRottler "library source")
 ### Enabled Google Services
 *library*|*identifier*|*version*
